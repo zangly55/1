@@ -17,4 +17,10 @@
 
 将 skills/didctf-8p-team-solver 整个目录安装到客户端技能目录，读取 SKILL.md 后按需配置依赖。DeepSeek 凭据由本地配置或进程环境提供，不随本仓库分发。
 
-外部方法库：[zhaoxuya520/reverse-skill](https://github.com/zhaoxuya520/reverse-skill)，需单独安装；本仓库只包含接入说明。工具二进制、案件检材、答案、运行日志与用户知识库不包含在本次发布中。
+外部方法库：[zhaoxuya520/reverse-skill](https://github.com/zhaoxuya520/reverse-skill)，需单独安装；本仓库只包含接入说明。工具二进制、原始案件检材、完整答案目录与运行日志不包含在本仓库中。
+
+## 取证知识库
+
+[知识库索引](knowledge/INDEX.md)
+
+knowledge/ 保留本地知识库的 cases/ 案例和 topics/ 方法条目，共 20 份 Markdown 文件。公开副本对发现的明文登录密码作脱敏处理，本地原文件未修改。文档内指向本机检材、答案、图片或工作区的路径仅作溯源记录，这些附件未上传，GitHub 无法直接打开。本次为手动快照上传，不会自动同步后续本地修改。
