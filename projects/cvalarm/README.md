@@ -13,7 +13,7 @@ cd 1/projects/cvalarm
 
 ## 最短复现路径
 
-需要 Python 3.10+；建议先用 Python 3.12。本轮在 Windows / Python 3.12.14 验证。默认流程只用标准库，不需要显卡、联网或安装依赖。
+需要 Python 3.10+；建议先用 Python 3.12。本地在 Windows / Python 3.12.14 验证；[GitHub CI](https://github.com/zangly55/1/actions/runs/41022317413) 的 Windows/Linux × Python 3.10/3.12/3.13 六组环境均通过。默认流程只用标准库，不需要显卡、联网或安装依赖。
 
 在解压后的 cvalarm 目录执行：
 
