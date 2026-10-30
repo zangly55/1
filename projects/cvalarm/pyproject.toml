@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cvalarm"
+version = "1.1.0"
+description = "持续视频监控中视觉语言模型异常告警的工程实现（前筛/定位/核验/反馈四阶段）"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "cvalarm contributors" }]
+keywords = ["video-surveillance", "anomaly-detection", "vlm", "edge-cloud", "alarm"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Environment :: Console",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Security",
+]
+# 工程只依赖 Python 标准库，刻意不引入 numpy / torch / scipy：
+# 现场环境常常无外网、无 GPU 驱动，装得上才能跑起来。
+dependencies = []
+
+[project.optional-dependencies]
+# 可选：接入真实检测器时按需安装（工程本身不依赖）
+yolo = ["ultralytics>=8.3", "opencv-python>=4.9"]
+video = ["opencv-python>=4.9,<5"]
+dev = ["pytest>=7.4"]
+
+[project.scripts]
+cvalarm = "cvalarm.cli:main"
+
+[tool.setuptools]
+packages = ["cvalarm"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

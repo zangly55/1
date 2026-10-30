@@ -1,0 +1,6 @@
+recursive-include config *.json
+recursive-include tests *.py *.js
+recursive-include tools *.py
+recursive-include docs *.md
+include AGENTS.md CONTEXT.md
+include 项目明细.md 修改清单.md 功能说明.md 使用说明.md

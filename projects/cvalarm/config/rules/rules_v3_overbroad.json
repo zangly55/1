@@ -1,0 +1,197 @@
+{
+  "ruleset_id": "rules_v3_overbroad",
+  "version_label": "v3-overbroad-demo",
+  "created_at": "2026-02-20T00:00:00+00:00",
+  "description": "反例规则集：把'短时滞留'整体豁免，用于演示回归门禁能拦住召回下降的规则。严禁上线。",
+  "policy": {
+    "default_action": "escalate",
+    "note": "结论由 priority 唯一决定：安全/可见性规则(200) > 授权抑制(150) > 告警(70-80) > 兜底(10)；平级时 suppress > escalate > alarm。"
+  },
+  "rules": [
+    {
+      "rule_id": "R-SAFETY-VISIBILITY",
+      "event_classes": [
+        "*"
+      ],
+      "description": "可见性不足时转人工复核。",
+      "when": {
+        "any": [
+          {
+            "field": "visibility_ok",
+            "op": "==",
+            "value": false
+          }
+        ]
+      },
+      "action": "escalate",
+      "priority": 200,
+      "severity": "medium",
+      "norm_ref": "《安全技术防范系统运行维护规范》§6.1 复核要求"
+    },
+    {
+      "rule_id": "R-SUPPRESS-AUTHORIZED",
+      "event_classes": [
+        "UNAUTHORIZED_INTRUSION",
+        "UNAUTHORIZED_DWELL",
+        "LOITERING",
+        "RESTRICTED_AREA_ACTIVITY"
+      ],
+      "description": "作业许可覆盖该时段时抑制告警。",
+      "when": {
+        "all": [
+          {
+            "field": "authorized",
+            "op": "==",
+            "value": true
+          }
+        ]
+      },
+      "action": "suppress",
+      "priority": 150,
+      "severity": "info",
+      "norm_ref": "《厂区作业许可管理办法》§3.4",
+      "require_authorization": [
+        "work_permit"
+      ]
+    },
+    {
+      "rule_id": "R-SUPPRESS-SHORT-DWELL",
+      "event_classes": [
+        "UNAUTHORIZED_INTRUSION",
+        "RESTRICTED_AREA_ACTIVITY"
+      ],
+      "description": "错误设计：把 120 秒以内的滞留一律当作'短暂穿越'豁免，未区分是否离开防区。",
+      "when": {
+        "all": [
+          {
+            "field": "dwell_seconds",
+            "op": "<=",
+            "value": 120
+          },
+          {
+            "field": "mean_det_score",
+            "op": ">=",
+            "value": 0.5
+          }
+        ]
+      },
+      "action": "suppress",
+      "priority": 145,
+      "severity": "info",
+      "norm_ref": "（错误规程示例，不具规范效力）"
+    },
+    {
+      "rule_id": "R-INTRUSION-A",
+      "event_classes": [
+        "UNAUTHORIZED_INTRUSION"
+      ],
+      "description": "周界防区 ROI-A 内滞留达到 45 秒。",
+      "when": {
+        "all": [
+          {
+            "field": "in_roi",
+            "op": "==",
+            "value": true
+          },
+          {
+            "field": "roi_id",
+            "op": "in",
+            "value": [
+              "ROI-A"
+            ]
+          },
+          {
+            "field": "dwell_seconds",
+            "op": ">=",
+            "value": 45
+          }
+        ]
+      },
+      "action": "alarm",
+      "priority": 80,
+      "severity": "high",
+      "norm_ref": "《厂区周界与重点区域安全管理细则》§5.2"
+    },
+    {
+      "rule_id": "R-RESTRICTED-C",
+      "event_classes": [
+        "RESTRICTED_AREA_ACTIVITY"
+      ],
+      "description": "装卸通道 ROI-C 内滞留达到 45 秒。",
+      "when": {
+        "all": [
+          {
+            "field": "roi_id",
+            "op": "in",
+            "value": [
+              "ROI-C"
+            ]
+          },
+          {
+            "field": "dwell_seconds",
+            "op": ">=",
+            "value": 45
+          }
+        ]
+      },
+      "action": "alarm",
+      "priority": 80,
+      "severity": "high",
+      "norm_ref": "《装卸作业区通行管理规定》§4.1"
+    },
+    {
+      "rule_id": "R-LOITER-B",
+      "event_classes": [
+        "LOITERING"
+      ],
+      "description": "装卸区 ROI-B 内连续滞留达到 1800 秒。",
+      "when": {
+        "all": [
+          {
+            "field": "roi_id",
+            "op": "in",
+            "value": [
+              "ROI-B"
+            ]
+          },
+          {
+            "field": "dwell_seconds",
+            "op": ">=",
+            "value": 1800
+          }
+        ]
+      },
+      "action": "alarm",
+      "priority": 70,
+      "severity": "high",
+      "norm_ref": "《厂区重点部位滞留时间管理规定》§2.3"
+    },
+    {
+      "rule_id": "R-DWELL-D",
+      "event_classes": [
+        "UNAUTHORIZED_DWELL"
+      ],
+      "description": "重点区域 ROI-D 内停留达到 300 秒（首版两类事件之一）。",
+      "when": {
+        "all": [
+          {
+            "field": "roi_id",
+            "op": "in",
+            "value": [
+              "ROI-D"
+            ]
+          },
+          {
+            "field": "dwell_seconds",
+            "op": ">=",
+            "value": 300
+          }
+        ]
+      },
+      "action": "alarm",
+      "priority": 75,
+      "severity": "high",
+      "norm_ref": "《重点区域停留时间管理规定》§2.1"
+    }
+  ]
+}

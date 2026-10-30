@@ -1,0 +1,270 @@
+{
+  "project": {
+    "name": "cvalarm",
+    "version": "1.1.0",
+    "description": "持续视频监控中视觉语言模型异常告警的工程实现（四阶段流水线）"
+  },
+  "runtime": {
+    "seed": 7,
+    "out_dir": "runs/demo",
+    "state_dir": "state",
+    "log_level": "info",
+    "anchor_mode": "bottom_center"
+  },
+  "cameras": {
+    "default_fps": 2.0,
+    "default_roi": [
+      [0.36, 0.55],
+      [0.74, 0.55],
+      [0.82, 0.95],
+      [0.28, 0.95]
+    ]
+  },
+  "tracker": {
+    "high_thresh": 0.5,
+    "low_thresh": 0.1,
+    "new_track_thresh": 0.55,
+    "match_iou": 0.3,
+    "low_match_iou": 0.2,
+    "min_hits": 3,
+    "max_lost_frames": 80,
+    "use_motion_prediction": true,
+    "kalman": {
+      "accel_noise": 0.02,
+      "meas_noise": 0.04
+    }
+  },
+  "fsm": {
+    "debounce_frames": 5,
+    "occlusion_tolerance_frames": 12,
+    "dwell_threshold_s": 45,
+    "exit_frames": 6,
+    "missing_window_s": 120,
+    "reid_policy": "precise",
+    "reid_sim_threshold": 0.6,
+    "max_speed_norm_per_s": 0.35,
+    "reid_max_speed_slack": 0.12,
+    "out_of_roi_policy": "pause",
+    "history_window_s": 60,
+    "min_candidate_confidence": 0.0
+  },
+  "stage2": {
+    "bin_seconds": 1.0,
+    "duration_hint_s": 8.0,
+    "weights": {
+      "roi_occupancy": 0.34,
+      "dwell_progress": 0.24,
+      "motion": 0.14,
+      "det_score": 0.16,
+      "size_consistency": 0.12
+    },
+    "tau_confirm": 0.55,
+    "tau_reject": 0.25,
+    "min_margin": 0.05,
+    "validity": {
+      "max_dropped_ratio": 0.15,
+      "min_snr": 12.0,
+      "max_occlusion_ratio": 0.5,
+      "min_valid_bins": 3
+    },
+    "calibration": {
+      "artifact": "state/calibration.json",
+      "require_hard_negatives": 20
+    }
+  },
+  "stage3": {
+    "mode": "baseline",
+    "modes": ["baseline", "cot_selfcheck", "role_pipeline", "adversarial_falsifier"],
+    "event_classes": [
+      "UNAUTHORIZED_INTRUSION",
+      "UNAUTHORIZED_DWELL",
+      "LOITERING",
+      "OBJECT_ABANDONED",
+      "VIOLENCE",
+      "RESTRICTED_AREA_ACTIVITY",
+      "UNKNOWN_ANOMALY"
+    ],
+    "verifier": "rule_based",
+    "max_tokens": 512,
+    "token_budget": 2600,
+    "json_strict": true,
+    "authorization_file": "config/rules/authorizations.json",
+    "vlm": {
+      "provider": "offline",
+      "endpoint": "",
+      "model": "",
+      "api_key_env": "CVALARM_VLM_API_KEY",
+      "timeout_s": 30,
+      "temperature": 0.0,
+      "response_format": "json_schema"
+    }
+  },
+  "rules": {
+    "active": "config/rules/rules_v1.json",
+    "ledger": "state/rule_ledger.jsonl",
+    "versions_dir": "state/rules_versions",
+    "staged_dir": "state/rules_staged",
+    "active_pointer": "state/rules_active.json",
+    "gate": {
+      "recall_tolerance": 0.02,
+      "fa_tolerance": 0.05,
+      "regression_set": "config/regression/regression_set.json"
+    }
+  },
+  "feedback": {
+    "path": "state/feedback.jsonl",
+    "audit_path": "state/audit_samples.jsonl",
+    "audit_windows_per_camera_hour": 6.0,
+    "audit_window_s": 30.0,
+    "blind_audit": true,
+    "reason_codes": [
+      "AUTHORIZED_WORK",
+      "REFLECTION_OR_SHADOW",
+      "ANIMAL_OR_OBJECT",
+      "CAMERA_ARTIFACT",
+      "LOW_VISIBILITY",
+      "RULE_FALSE_POSITIVE",
+      "DUPLICATE_ALARM",
+      "OTHER"
+    ]
+  },
+  "metrics": {
+    "tta_deadline_s": 30,
+    "event_match": {
+      "interval_iou": 0.3,
+      "point_tolerance_s": 10.0,
+      "pre_tolerance_s": 5.0,
+      "post_tolerance_s": 20.0,
+      "one_to_one": true
+    },
+    "fa_merge_gap_s": 300,
+    "frame_label_tolerance_s": 2.0,
+    "report_top_k": 50,
+    "localization": {
+      "tolerance_s": 5.0,
+      "note": "定位边界误差只统计已命中事件且提供了 evidence_span 的事件；与事件存在性判定分开报告。"
+    },
+    "sample_size_warning_below": 20
+  },
+  "protocol": {
+    "mode": "none",
+    "dev": {
+      "cameras": ["CAM-01"],
+      "time_ranges": [[0.0, 3600.0]]
+    },
+    "test": {
+      "cameras": ["CAM-01", "CAM-02"],
+      "time_ranges": [[3600.0, 10800.0]]
+    },
+    "note": "mode=holdout 时：标定只用 dev 段；指标只统计 test 段。开发材料定阈值、测试前冻结配置，避免同一事件的相邻切片分入两组。"
+  },
+  "models": {
+    "detector": {
+      "id": "yolov10n（可替换）",
+      "version": "adapter-not-loaded",
+      "provider": "offline-simulator",
+      "quantization": "none",
+      "note": "参考实现用可替换的合成检测层；接真实系统时在此登记权重版本与量化方式。"
+    },
+    "localizer": {
+      "id": "heuristic-reference-scorer",
+      "version": "1.0.0",
+      "provider": "builtin",
+      "quantization": "none",
+      "note": "生产替换点：VideoJev 式轻量时序打分头。"
+    },
+    "verifier": {
+      "id": "rule-based-reference",
+      "version": "1.0.0",
+      "provider": "builtin",
+      "quantization": "none",
+      "note": "首版单模型基线之外的规则对照，用于证明规则与模型谁更好这一待测假设。"
+    },
+    "vlm": {
+      "id": "",
+      "version": "",
+      "provider": "openai-compatible",
+      "quantization": "",
+      "endpoint": ""
+    }
+  },
+  "evidence": {
+    "enabled": true,
+    "pre_roll_s": 5.0,
+    "post_roll_s": 0.0,
+    "keyframes": 3,
+    "schematic": true,
+    "note": "证据回放：给卡片附时间轴片段、必要前后文、关键帧。schematic=true 表示用检测结果重绘示意图（非原始视频帧），接真实视频后可用 /media 回放原片段。"
+  },
+  "latency": {
+    "sampling_ms": 40,
+    "transmission_ms": 60,
+    "tracking_ms": 12,
+    "stage2_ms": 180,
+    "stage3_prefill_ms": 240,
+    "stage3_decode_ms": 420,
+    "network_ms": 60,
+    "render_ms": 90,
+    "jitter_rel": 0.15
+  },
+  "cost": {
+    "topology": "edge-gateway-cascade",
+    "price": {
+      "gpu_second": 0.000333,
+      "human_hour": 18.0,
+      "egress_gb": 0.08,
+      "api_input_token": 0.0000005,
+      "api_output_token": 0.000002
+    },
+    "stage": {
+      "stage1_gpu_ms_per_frame": 12.0,
+      "stage2_gpu_ms_per_candidate_s": 45.0,
+      "stage3_gpu_ms_per_input_s": 900.0,
+      "stage3_input_tokens_per_frame": 520,
+      "stage3_output_tokens": 420,
+      "prefill_tokens_per_s": 900.0,
+      "decode_tokens_per_s": 45.0,
+      "encode_bitrate_mbps": 2.0
+    },
+    "feedback": {
+      "human_minutes_per_alarm": 2.5,
+      "reflection_minutes_per_camera_week": 30.0,
+      "analysis_days": 7.0
+    },
+    "sensitivity": {
+      "r1_range": [0.01, 0.05],
+      "r2_range": [0.05, 0.2],
+      "steps": 5
+    }
+  },
+  "deployment": {
+    "topology": "edge-gateway-cascade",
+    "edge": {
+      "device": "8GB~16GB 显存边缘工控机",
+      "max_cameras_per_device": 8,
+      "models": ["yolov10n", "bytetrack"]
+    },
+    "gateway": {
+      "device": "区域网关专业级 GPU",
+      "models": ["interval-scorer", "qwen2-vl-2b-int4"]
+    },
+    "cloud": {
+      "enabled": false,
+      "provider": "",
+      "models": ["qwen-vl-max"],
+      "egress_review_required": true
+    },
+    "privacy": {
+      "store_originals": true,
+      "mask_faces_and_plates": true,
+      "retention_days": 30,
+      "sign_cards": true,
+      "signing_key_env": "CVALARM_SIGNING_KEY"
+    },
+    "media": {
+      "root": "",
+      "cameras": {},
+      "note": "若填写 cameras（如 {\"CAM-01\": \"data/CAM-01.mp4\"}），看板会开放 /media/<camera> 支持 Range 的片段回放；未填写时报告只展示证据示意图与回放清单。"
+    }
+  }
+}

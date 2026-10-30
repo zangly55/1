@@ -1,0 +1,18 @@
+{
+  "runtime": {
+    "out_dir": "runs/v1"
+  },
+  "stage3": {
+    "verifier": "rule_based",
+    "mode": "baseline",
+    "note": "首版先用单个 Qwen 建立基线；未配置端点时以规则参考核验器作为对照基线，不预设模型必然更优。"
+  },
+  "evidence": {
+    "enabled": true,
+    "schematic": true
+  },
+  "protocol": {
+    "mode": "none"
+  },
+  "scope_note": "首版范围：单镜头、两类累计在场事件（进入 ROI-A 后达到 45 秒 / ROI-D 达到 300 秒）；模型接口待真实资源验证，默认规则对照；含证据回放与人工复核。暂缓实时接流、多 Agent、自动规则演化。"
+}

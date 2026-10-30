@@ -1,0 +1,11 @@
+# 本工程只依赖 Python 3.10+ 标准库，**无需安装任何第三方包**。
+#
+# 直接运行：
+#   python run.py demo
+#
+# 如需以命令行工具方式安装（可选）：
+#   python -m pip install -e .
+#   cvalarm demo
+#
+# 接入真实检测器（YOLOv10 + ByteTrack）时可选安装：
+#   python -m pip install ultralytics opencv-python

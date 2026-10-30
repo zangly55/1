@@ -1,0 +1,14 @@
+# 运行产物与状态（可按需保留）
+runs/
+state/
+data/
+
+# Python 缓存
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+*.log

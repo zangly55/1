@@ -1,0 +1,60 @@
+{
+  "source": "external-work-permit-system",
+  "note": "非参数外部规则数据：作业许可、特种作业免检、临时封闭等都不在画面中，必须与视觉事实分开核验。times 为流内相对秒（生产环境应为绝对墙钟 ISO-8601）。",
+  "updated_at": "2026-01-05T00:00:00+00:00",
+  "permits": [
+    {
+      "permit_id": "WP-2291",
+      "kind": "cleaning",
+      "holder": "外委保洁班组（2 人）",
+      "camera_id": "CAM-01",
+      "roi_id": "ROI-A",
+      "start": 300.0,
+      "end": 660.0,
+      "scope": [
+        "UNAUTHORIZED_INTRUSION",
+        "UNAUTHORIZED_DWELL",
+        "LOITERING"
+      ],
+      "approver": "厂区安全科",
+      "source": "work-permit-system"
+    },
+    {
+      "permit_id": "WP-2384",
+      "kind": "maintenance",
+      "holder": "设备检修班（2 人）",
+      "camera_id": "CAM-02",
+      "roi_id": "ROI-B",
+      "start": 300.0,
+      "end": 2400.0,
+      "scope": [
+        "LOITERING",
+        "UNAUTHORIZED_DWELL"
+      ],
+      "approver": "设备动力部",
+      "source": "work-permit-system"
+    },
+    {
+      "permit_id": "WP-V1",
+      "kind": "maintenance",
+      "holder": "重点区域例行巡检（1 人）",
+      "camera_id": "CAM-01",
+      "roi_id": "ROI-D",
+      "start": 2200.0,
+      "end": 2700.0,
+      "scope": [
+        "UNAUTHORIZED_DWELL",
+        "LOITERING"
+      ],
+      "approver": "厂区安全科",
+      "source": "work-permit-system"
+    }
+  ],
+  "blackout_windows": [],
+  "notes": [
+    "许可只覆盖申报的区域与时段；超出时段的部分仍按违规处理。",
+    "许可记录不得由视觉模型推断，必须查询外部系统。"
+  ],
+  "complete": true,
+  "data_kind": "synthetic-demo-only"
+}

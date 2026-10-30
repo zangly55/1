@@ -1,0 +1,34 @@
+{
+  "stage2": {
+    "scorer": {
+      "kind": "http",
+      "endpoint": "http://127.0.0.1:9001/score",
+      "api_key_env": "CVALARM_LOCALIZER_API_KEY",
+      "timeout_s": 30,
+      "model_id": "replace-with-service-model",
+      "model_revision": "replace-with-weights-sha256",
+      "queries": {
+        "UNAUTHORIZED_INTRUSION": "A person remains inside the designated region.",
+        "UNAUTHORIZED_DWELL": "A person remains inside the designated region."
+      }
+    }
+  },
+  "stage3": {
+    "verifier": "vlm",
+    "mode": "baseline",
+    "authorization_file": "data/site/authorizations.json",
+    "vlm": {
+      "endpoint": "http://127.0.0.1:8000/v1/chat/completions",
+      "model": "replace-with-served-model-name",
+      "frames_manifest": "data/site/frames_manifest.json",
+      "max_frames": 3,
+      "api_key_env": "CVALARM_VLM_API_KEY"
+    }
+  },
+  "deployment": {
+    "media": {
+      "root": "data/site",
+      "cameras": {"CAM-01": "video.mp4"}
+    }
+  }
+}
