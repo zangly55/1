@@ -1,0 +1,4 @@
+interface:
+  display_name: "数字取证与 CTF"
+  short_description: "按目标选择案件分析、程序逆向、内存与流量取证、资金研判、笔录报告或 CTF 流程。"
+

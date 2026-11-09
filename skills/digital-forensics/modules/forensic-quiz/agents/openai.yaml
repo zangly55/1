@@ -1,0 +1,3 @@
+interface:
+  display_name: "取证解题"
+  short_description: "核对检材、证据与答案格式，复核错题并减少重复取证"

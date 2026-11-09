@@ -1,0 +1,152 @@
+#!/usr/bin/env sh
+set -eu
+
+if [ "${GES_CLI_APP+x}" != "x" ]; then
+    export GES_CLI_APP=goldeneyes
+fi
+
+SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+WINDOWS_SHELL=0
+
+case "$(uname -s 2>/dev/null || true)" in
+    MINGW*|MSYS*|CYGWIN*)
+        WINDOWS_SHELL=1
+        WINDOWS_ROOT=${SystemRoot:-${WINDIR:-C:\\Windows}}
+        if command -v cygpath >/dev/null 2>&1; then
+            WINDOWS_ROOT=$(cygpath -u "$WINDOWS_ROOT")
+        fi
+        PATH="$WINDOWS_ROOT/System32/WindowsPowerShell/v1.0:$WINDOWS_ROOT/System32:$WINDOWS_ROOT/System32/Wbem:${PATH:-}"
+        export PATH
+        ;;
+esac
+
+GE_HOME_TEMPLATE="__GOLDENEYES_HOME__"
+
+GE_HOME_RESOLVED=${GOLDENEYES_HOME:-${GE_HOME:-}}
+GE_PYTHON=${GOLDENEYES_PYTHON:-}
+GE_PYPLUGIN=${GOLDENEYES_PYPLUGIN:-}
+
+if [ -z "$GE_HOME_RESOLVED" ] && [ "$GE_HOME_TEMPLATE" != "__GOLDENEYES_HOME__" ]; then
+    GE_HOME_RESOLVED=$GE_HOME_TEMPLATE
+fi
+
+try_home_candidate() {
+    candidate=$(CDPATH= cd -- "$1" 2>/dev/null && pwd || true)
+    if [ -n "$candidate" ] && { [ -x "$candidate/Python311/python.exe" ] || [ -x "$candidate/Python311/bin/python3" ] || [ -x "$candidate/Python311/python" ] || [ -x "$candidate/Python311/python3" ]; }; then
+        GE_HOME_RESOLVED=$candidate
+    fi
+}
+
+query_registry_value() {
+    registry_key=$1
+    value_name=$2
+    registry_view=$3
+    if [ "$value_name" = "@" ]; then
+        output=$(MSYS2_ARG_CONV_EXCL='*' reg.exe query "$registry_key" /ve "/reg:$registry_view" 2>/dev/null || true)
+    else
+        output=$(MSYS2_ARG_CONV_EXCL='*' reg.exe query "$registry_key" /v "$value_name" "/reg:$registry_view" 2>/dev/null || true)
+    fi
+    printf '%s\n' "$output" | tr -d '\r' | sed -n 's/^[[:space:]]*[^[:space:]][^[:space:]]*[[:space:]]*REG_[^[:space:]]*[[:space:]]*//p' | head -n 1
+}
+
+try_registry_home() {
+    for registry_key in 'HKCU\Software\honglian\GoldenEyesV4' 'HKLM\Software\honglian\GoldenEyesV4'; do
+        for registry_view in 64 32; do
+            candidate=$(query_registry_value "$registry_key" @ "$registry_view")
+            if [ -n "$candidate" ] && command -v cygpath >/dev/null 2>&1; then
+                candidate=$(cygpath -u "$candidate")
+            fi
+            try_home_candidate "$candidate"
+            [ -n "$GE_HOME_RESOLVED" ] && return
+
+            candidate=$(query_registry_value "$registry_key" Path "$registry_view")
+            if [ -n "$candidate" ] && command -v cygpath >/dev/null 2>&1; then
+                candidate=$(dirname -- "$(cygpath -u "$candidate")")
+            fi
+            try_home_candidate "$candidate"
+            [ -n "$GE_HOME_RESOLVED" ] && return
+        done
+    done
+}
+
+if [ -z "$GE_HOME_RESOLVED" ]; then
+    try_home_candidate "$SCRIPT_DIR/../../.."
+fi
+
+if [ -z "$GE_HOME_RESOLVED" ]; then
+    try_home_candidate "$SCRIPT_DIR/../../../../../../"
+fi
+
+case "$(uname -s 2>/dev/null || true)" in
+    MINGW*|MSYS*|CYGWIN*)
+        if [ -z "$GE_HOME_RESOLVED" ]; then
+            try_registry_home
+        fi
+        ;;
+esac
+
+if [ -z "$GE_HOME_RESOLVED" ]; then
+    for candidate in \
+        "/opt/Honglian/GoldenEyesV4" \
+        "/opt/honglian/GoldenEyesV4" \
+        "/opt/goldeneyes/GoldenEyesV4" \
+        "/usr/local/Honglian/GoldenEyesV4" \
+        "/usr/local/GoldenEyesV4"
+    do
+        if [ -x "$candidate/Python311/bin/python3" ] || [ -x "$candidate/Python311/python" ]; then
+            GE_HOME_RESOLVED=$candidate
+            break
+        fi
+    done
+fi
+
+if [ -n "$GE_HOME_RESOLVED" ]; then
+    if [ -z "$GE_PYTHON" ] && [ -x "$GE_HOME_RESOLVED/Python311/python.exe" ]; then
+        GE_PYTHON=$GE_HOME_RESOLVED/Python311/python.exe
+    elif [ -z "$GE_PYTHON" ] && [ -x "$GE_HOME_RESOLVED/Python311/bin/python3" ]; then
+        GE_PYTHON=$GE_HOME_RESOLVED/Python311/bin/python3
+    elif [ -z "$GE_PYTHON" ] && [ -x "$GE_HOME_RESOLVED/Python311/python" ]; then
+        GE_PYTHON=$GE_HOME_RESOLVED/Python311/python
+    elif [ -z "$GE_PYTHON" ] && [ -x "$GE_HOME_RESOLVED/Python311/python3" ]; then
+        GE_PYTHON=$GE_HOME_RESOLVED/Python311/python3
+    fi
+    if [ -z "$GE_PYPLUGIN" ]; then
+        GE_PYPLUGIN=$GE_HOME_RESOLVED/pyplugin
+    fi
+fi
+
+if [ -z "$GE_PYTHON" ]; then
+    if command -v python3 >/dev/null 2>&1; then
+        GE_PYTHON=$(command -v python3)
+    else
+        echo "错误: 未找到弘连火眼 Python。请将 GOLDENEYES_HOME 设置为 GoldenEyesV4 安装目录。" >&2
+        exit 1
+    fi
+fi
+
+if [ -n "$GE_PYPLUGIN" ] && [ -d "$GE_PYPLUGIN/pygesclient" ]; then
+    if [ "$WINDOWS_SHELL" = "1" ] && command -v cygpath >/dev/null 2>&1; then
+        GE_PYPLUGIN_ENV=$(cygpath -w "$GE_PYPLUGIN")
+        if [ -n "${PYTHONPATH:-}" ]; then
+            export PYTHONPATH="$GE_PYPLUGIN_ENV;$PYTHONPATH"
+        else
+            export PYTHONPATH="$GE_PYPLUGIN_ENV"
+        fi
+    elif [ -n "${PYTHONPATH:-}" ]; then
+        export PYTHONPATH="$GE_PYPLUGIN:$PYTHONPATH"
+    else
+        export PYTHONPATH="$GE_PYPLUGIN"
+    fi
+elif ! "$GE_PYTHON" -c "import pygesclient" >/dev/null 2>&1; then
+    if [ -n "$GE_PYPLUGIN" ]; then
+        echo "错误: 在以下目录未找到 pygesclient: $GE_PYPLUGIN" >&2
+    else
+        echo "错误: 无法导入 pygesclient。请设置 GOLDENEYES_HOME 或 PYTHONPATH。" >&2
+    fi
+    exit 1
+fi
+
+export PYTHONUTF8=1
+export PYTHONIOENCODING=utf-8
+
+exec "$GE_PYTHON" -c "from pygesclient.ges_cli.main import main; raise SystemExit(main())" "$@"

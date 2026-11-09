@@ -1,23 +1,37 @@
-# didctf-8p-team-solver
+# digital-forensics
 
-数字取证与 CTF 题组解答技能：DeepSeek 八个独立会话（六名解题手、一名 WP 编写者、一名知识库整理者），GPT 同步准备火眼案件、复核答案，并接续未完成题目。
+数字取证与 CTF 统一技能：按对象、操作和交付物选择案件分析、程序逆向、内存/流量/服务器取证、资金研判或取证文书流程。
 
 ## 技能入口
 
-[SKILL.md](skills/didctf-8p-team-solver/SKILL.md)
+[SKILL.md](skills/digital-forensics/SKILL.md) · [专家联动与依赖](skills/digital-forensics/references/expert-linkage.md) · [环境与安装](skills/digital-forensics/references/environment.md)
 
-- 首轮共享最多 45 分钟墙钟预算，可靠答案优先交付。
-- 火眼 GES CLI 负责检材访问、解析与导出。
-- [reverse-skill 接入说明](skills/didctf-8p-team-solver/references/reverse-skill.md)提供按题型选择方法与本机工具的流程。
-- scripts/ 包含 DeepSeek 启动器、八会话编排器与离线测试；references/ 包含工作手册、模板与复核规范。
+本入口替代原来的 `skills/didctf-8p-team-solver` 独立入口；原团队能力已更新为本机现行的 GPT 原生子代理流程，保留在统一技能的 [modules/didctf-8p-team-solver](skills/digital-forensics/modules/didctf-8p-team-solver/SKILL.md) 下，只有整组竞赛或明确团队任务才选择它。
 
-## 使用前配置
+| 分支 | 用途 |
+| --- | --- |
+| 火眼 GES | 案件准备、数据查询、跨检材关联，以及明确要求的原始检材哈希 |
+| APK / EXE | 应用源码、程序逻辑和必要的运行验证 |
+| 内存 / 流量 / 服务器 | 按检材类型排查进程、通信、账号、日志和时间线 |
+| 资金流水 | 资金去向、账户关联与异常特征研判 |
+| 取证文书 | 基于真实记录起草四类取证笔录、生成 Word，或整理已有分析报告 |
+| CTF | 单题解答、错题复核；按明确任务选择团队流程 |
 
-这是当前 Windows 本机版本，文档中保留实际工具和知识库路径。换机使用前，请按实际环境调整技能路径、火眼目录、DeepSeek Harness 路径、reverse-skill 根目录和知识库位置，并核验工具可用性。
+## 安装与使用
 
-将 skills/didctf-8p-team-solver 整个目录安装到客户端技能目录，读取 SKILL.md 后按需配置依赖。DeepSeek 凭据由本地配置或进程环境提供，不随本仓库分发。
+复制 `skills/digital-forensics/` 整个目录到客户端技能目录，保留 `agents/`、`references/`、`modules/` 结构。只启用统一入口，模块按需读取。升级旧安装前先备份，按客户端支持的方式关闭重复入口；具体步骤见环境与安装说明。
 
-外部方法库：[zhaoxuya520/reverse-skill](https://github.com/zhaoxuya520/reverse-skill)，需单独安装；本仓库只包含接入说明。工具二进制、原始案件检材、完整答案目录与运行日志不包含在本仓库中。
+示例请求：
+
+- “用 digital-forensics 分析这个已有抓包中的文件传输。”
+- “核查这个 APK 是否实际上传指定数据，并说明证据缺口。”
+- “根据这些取证日志起草电子数据提取笔录并导出 Word。”
+
+普通单项任务由 Codex 直接完成；加载专家不等于运行全部流程或启动团队。Kimi 仅在用户明确点名时调用。原始检材只读，事实、推断和待核验事项分开。
+
+本包包含 7 个基础模块、8 个专家包及所需参考资料、模板、脚本与 GES 启动器。火眼、AppAnalyzer、ForensicDesktop、BootMagix、网钜、IDA/x64dbg 及 [reverse-skill 方法库](https://github.com/zhaoxuya520/reverse-skill) 属于外部依赖，使用时按当前环境核实。历史工具验收记录不代表当前机器已就绪。
+
+仓库版将包内引用改为相对路径，将个人电脑上的外部路径改为可配置占位符。DeepSeek 启动器仅作为历史资源保留，不属于当前 GPT 工作流。技能发布不自动上传案件材料或同步后续本地修改。
 
 ## 取证知识库
 
