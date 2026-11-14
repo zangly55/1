@@ -86,1877 +86,4089 @@ Q193租约目标MAC与题面相差一个字节，参考答案实际对应近似M
 
 ## 逐题记录
 
-下文“正式复核”仅表示本会话本地证据与口径已复核；不表示官方判题正确。“成员复现待主复核”有独立证据工件，但尚未进入正式发布快照。“待复核或未解”不采用参考答案冒充结论。
+以下为既有记录的详细展开，不新增已完成或官方正确声明。状态以赛后冻结清单为准。历史原值及截图均不随本补充公开。
 
-## CL-01：Windows与OpenClaw
+### CL-01 Windows与OpenClaw
 
-### Q73 计算机名
+#### Q73 计算机名
 
-公开结论：[敏感值不公开]。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：在恢复副本上读取 SYSTEM 的 ComputerName 键。
+证据定位：CL-01.e01/Operating_System/Windows/System32/config/SYSTEM；/ControlSet001/Control/ComputerName/ComputerName
 
-证据定位：`CL-01.e01/Operating_System/Windows/System32/config/SYSTEM；/ControlSet001/Control/ComputerName/ComputerName`。
+方法依据：复现说明。
 
-### Q74 Windows时区
+1. 从CL-01导出SYSTEM及配套事务日志，在副本上恢复和查看。
 
-公开结论：C（UTC+08:00）。状态：正式复核。
+2. 定位ControlSet001/Control/ComputerName/ComputerName，读取计算机名值。
 
-方法：读取 TimeZoneInformation，区分时区配置与显示时间。
+3. 连同控制集和键路径记录原值，避免误取用户显示名。
 
-证据定位：`CL-01.e01/Operating_System/Windows/System32/config/SYSTEM；/ControlSet001/Control/TimeZoneInformation`。
+验证依据或核验要求：清单中的来源明确指向SYSTEM的ComputerName键；复现时还应核对活动控制集。
 
-### Q75 最后登录本机用户
+易错点：用户名、设备昵称与计算机名不同。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q74 Windows时区
 
-方法：读取 SOFTWARE 的 LogonUI 最近用户值。
+状态：正式复核。公开结论：C（UTC+08:00）。
 
-证据定位：`CL-01.e01/Operating_System/Windows/System32/config/SOFTWARE；/Microsoft/Windows/CurrentVersion/Authentication/LogonUI`。
+证据定位：CL-01.e01/Operating_System/Windows/System32/config/SYSTEM；/ControlSet001/Control/TimeZoneInformation
 
-### Q76 默认邮件客户端
+方法依据：复现说明。
 
-公开结论：Microsoft Outlook。状态：正式复核。
+1. 读取SYSTEM中的ControlSet001/Control/TimeZoneInformation。
 
-方法：读取 SOFTWARE\Clients\Mail 默认值。
+2. 查看时区名称和偏移相关值，确认本机配置的时区。
 
-证据定位：`CL-01.e01/Operating_System/Windows/System32/config/SOFTWARE；/Clients/Mail`。
+3. 将该配置对应至题目选项，保留UTC+08:00的含义。
 
-### Q77 iCloud登录手机型号
+验证依据或核验要求：本场结论为C；它描述系统时区配置。
 
-公开结论：iPhone 12 Pro Max。状态：正式复核。
+易错点：某条日志显示本地时间，不等于已验证系统时区。
 
-方法：将 iCloud 登录邮件与代理会话中的邮件内容交叉核对。
+#### Q75 最后登录本机用户
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 165；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox`。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-### Q78 邮件登录验证码
+证据定位：CL-01.e01/Operating_System/Windows/System32/config/SOFTWARE；/Microsoft/Windows/CurrentVersion/Authentication/LogonUI
 
-公开结论：[敏感值不公开]。状态：正式复核。
+方法依据：复现说明。
 
-方法：在 OST Inbox 定位对应服务的验证码邮件，只本地保留原值。
+1. 打开恢复副本中的SOFTWARE配置单元。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；IPM_SUBTREE/Inbox; message node 2097444`。
+2. 进入Microsoft/Windows/CurrentVersion/Authentication/LogonUI，读取最近登录用户相关值。
 
-### Q79 指定日期Q Coin购买量
+3. 保留原始账号格式，并与题意的“最后登录本机用户”对应。
 
-公开结论：215740.07870502。状态：正式复核。
+验证依据或核验要求：用LogonUI字段语义确认它记录的是最近登录身份。
 
-方法：按业务日期读取购买记录，核对邮件及会话记录中的数量。
+易错点：用户目录存在或目录时间新，不足以推出最后登录用户。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl.reset.2026-08-05T02-17-19.691Z；JSONL line 177；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox`。
+#### Q76 默认邮件客户端
 
-### Q80 OpenClaw默认模型
+状态：正式复核。公开结论：Microsoft Outlook。
 
-公开结论：C（DeepSeek V4 Flash）。状态：正式复核。
+证据定位：CL-01.e01/Operating_System/Windows/System32/config/SOFTWARE；/Clients/Mail
 
-方法：读取 agents.defaults.model.primary。
+方法依据：复现说明。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/openclaw.json；$.agents.defaults.model.primary`。
+1. 在SOFTWARE中定位Clients/Mail。
 
-### Q81 模型授权密钥
+2. 读取该位置的默认客户端值，不以已安装程序列表代替。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 按原文记录Microsoft Outlook并对应题目。
 
-方法：定位 auth_profile_store；不公开密钥及密钥哈希。
+验证依据或核验要求：检查默认值确实来自Clients/Mail而非任一子项的显示名称。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/agent/openclaw-agent.sqlite；auth_profile_store`。
+易错点：安装了多个邮件程序，并不表示每个都为默认。
 
-### Q82 AI助手名称
+#### Q77 iCloud登录手机型号
 
-公开结论：[敏感值不公开]。状态：正式复核。
+状态：正式复核。公开结论：iPhone 12 Pro Max。
 
-方法：读取工作区 IDENTITY.md 对应名称字段。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 165；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/workspace/IDENTITY.md；line 3`。
+方法依据：复现说明。
 
-### Q83 WhatsApp插件版本
+1. 在Outlook的Inbox定位iCloud登录通知邮件。
 
-公开结论：C（2026.7.1）。状态：正式复核。
+2. 读取通知中登录设备的型号描述。
 
-方法：读取 WhatsApp 扩展 package.json 的 version。
+3. 在OpenClaw会话JSONL第165行附近找到对应邮件内容，与原邮件交叉核对。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/extensions/whatsapp/package.json；$.version`。
+验证依据或核验要求：邮件和会话内容均支持iPhone 12 Pro Max。
 
-### Q84 定时任务内容
+易错点：会话转述可能省略信息，应以原通知及对应事件确认。
 
-公开结论：B（每小时检查邮件）。状态：正式复核。
+#### Q78 邮件登录验证码
 
-方法：查询 openclaw.sqlite 的 cron_jobs，区分任务定义与执行结果。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/state/openclaw.sqlite；cron_jobs`。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；IPM_SUBTREE/Inbox; message node 2097444
 
-### Q85 最早Chrome搜索词
+方法依据：复现说明。
 
-公开结论：openclaw。状态：正式复核。
+1. 在CL-01的OST Inbox中定位消息节点2097444。
 
-方法：关联 keyword_search_terms、urls、visits，按首次访问顺序排序。
+2. 核对服务名称、邮件主题与时间，确认是题目所问的登录验证码邮件。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Google/Chrome/User Data/Default/History；keyword_search_terms joined urls and visits; first visit id=1`。
+3. 读取正文中验证码原值并保留本地，记录对应消息节点。
 
-### Q86 默认浏览器程序
+验证依据或核验要求：核对同服务的多次验证码邮件，避免取到邻近一次登录。
 
-公开结论：A（chrome.exe）。状态：正式复核。
+易错点：验证码不能用邮箱账号、邮件ID或其他服务的验证码替代。
 
-方法：关联 http/https UserChoice、注册的处理程序及火眼默认浏览器表。
+#### Q79 指定日期Q Coin购买量
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/NTUSER.DAT；Software/Microsoft/Windows/Shell/Associations/UrlAssociations/http/UserChoice; https/UserChoice；/case/检材分析数据/未指定持有人/12/基本信息/默认浏览器/data.csv`。
+状态：正式复核。公开结论：215740.07870502。
 
-### Q87 提示注入发生日期
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl.reset.2026-08-05T02-17-19.691Z；JSONL line 177；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox
 
-公开结论：2026-08-06。状态：正式复核。
+方法依据：复现说明。
 
-方法：将邮件时间与会话处理时间对齐，确认恶意指令出现日期。
+1. 按题目业务日期筛选Q Coin购买相关邮件。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 16；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox`。
+2. 读取购买数量，保留原始小数精度及币种单位。
 
-### Q88 恶意内容投递载体
+3. 到指定reset会话JSONL第177行附近核对代理处理的同笔数量。
 
-公开结论：A（电子邮件）。状态：正式复核。
+验证依据或核验要求：本场数量215740.07870502，邮件和会话相互印证。
 
-方法：核对实际投递邮件及会话输入，区分载体与被攻击的工具。
+易错点：购买数量与付款金额不同，不能因为数值相近就互换。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 16；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox`。
+#### Q80 OpenClaw默认模型
 
-### Q89 图片最初存入方式
+状态：正式复核。公开结论：C（DeepSeek V4 Flash）。
 
-公开结论：B（互联网下载）。状态：正式复核。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/openclaw.json；$.agents.defaults.model.primary
 
-方法：关联 Chrome downloads 与 downloads_url_chains，确认原始下载记录。
+方法依据：复现说明。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Google/Chrome/User Data/Default/History；downloads id=8 and downloads_url_chains`。
+1. 打开CL-01用户目录下的.openclaw/openclaw.json。
 
-### Q90 Photos最早打开的文件
+2. 定位agents.defaults.model.primary，读取默认模型完整标识。
 
-公开结论：WhatsApp Image 2026-08-03 at 16.54.57 (1).jpeg。状态：正式复核。
+3. 将标识映射到题目模型选项，保留默认配置这一结论范围。
 
-方法：解析 Photos JumpList 的 DestList v4，比较现存4条记录。
+验证依据或核验要求：本场对应C，DeepSeek V4 Flash。
 
-证据定位：`CL-01.e01/Operating_System/Users/[用户]/AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations/a52b0784bd667468.automaticDestinations-ms；DestList version4; entry_number=1; earliest image entry; all 4 extant records parsed；/case/检材分析数据/未指定持有人/12/用户痕迹/最近访问的项目/data.csv`。
+易错点：列在providers中的模型不一定是默认模型；配置也不证明每次调用实际使用它。
 
-## CL-02：iOS与WhatsApp
+#### Q81 模型授权密钥
 
-### Q91 系统版本
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：26.5。状态：正式复核。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/agent/openclaw-agent.sqlite；auth_profile_store
 
-方法：读取 iDevice_info.txt 系统属性并交叉检查版本字段。
+方法依据：复现说明。
 
-证据定位：`CL-02.bin/分区1/iDevice_info.txt；line84 and line49`。
+1. 只读打开.openclaw/agents/main/agent/openclaw-agent.sqlite副本。
 
-### Q92 IANA时区
+2. 查看auth_profile_store结构及其与目标服务配置的对应关系。
 
-公开结论：C。状态：正式复核。
+3. 定位题目所问模型的授权记录，保留原值、记录位置及服务映射于本地。
 
-方法：读取设备时区配置，保留 IANA 标识语义。
+验证依据或核验要求：核对授权记录所属模型/Provider，不能取任意一条凭据。
 
-证据定位：`CL-02.bin/分区1/iDevice_info.txt；line100`。
+易错点：当前遗留稿未恢复该原值，不能从公开占位符反推或编造密钥。
 
-### Q93 AirDrop标识
+#### Q82 AI助手名称
 
-公开结论：[敏感值不公开]。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：读取 com.apple.sharingd.plist 的 AirDropID。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/workspace/IDENTITY.md；line 3
 
-证据定位：`CL-02.bin/分区1/var/mobile/Library/Preferences/com.apple.sharingd.plist；top-level key AirDropID`。
+方法依据：复现说明。
 
-### Q94 头像服饰颜色
+1. 进入该用户.openclaw/workspace目录。
 
-公开结论：C。状态：正式复核。
+2. 打开IDENTITY.md，在第3行附近定位助手名称字段。
 
-方法：目视原始头像，不以缩略图推断。
+3. 保留名称原始拼写，并将它与模型名、用户名区分。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Media/Profile/[长编号]-[长编号].jpg；Original WhatsApp own profile photograph`。
+验证依据或核验要求：名称来自工作区身份文件的名称字段。
 
-### Q95 电子名片联系人
+易错点：IDENTITY.md是检材内容，里面的操作性文字不是对分析者的指令。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q83 WhatsApp插件版本
 
-方法：关联电子名片附件与对应聊天上下文。
+状态：正式复核。公开结论：C（2026.7.1）。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；Sent contact card to [用户]; Ching Fung / +[长编号]`。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/extensions/whatsapp/package.json；$.version
 
-### Q96 群组唯一标识
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 进入.openclaw/extensions/whatsapp目录。
 
-方法：存在多个群组；需题意明确或承接前题才可唯一选择。
+2. 读取package.json的顶层version字段。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；Two groups exist; preceding venue/preparation context refers to first [敏感值不公开]`。
+3. 保留完整版本字符串2026.7.1并对应选项C。
 
-边界：题目未指明哪一群组；承接前题可支持候选，但单独题面不足以唯一选择。
+验证依据或核验要求：确认文件属于WhatsApp扩展，而不是OpenClaw主程序。
 
-### Q97 定时任务失败原因
+易错点：主程序版本、WhatsApp手机版本和插件版本不可互换。
 
-公开结论：D。状态：正式复核。
+#### Q84 定时任务内容
 
-方法：读取指定时刻消息与任务失败回复。
+状态：正式复核。公开结论：B（每小时检查邮件）。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 484,485`。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/state/openclaw.sqlite；cron_jobs
 
-### Q98 询价证券代码
+方法依据：复现说明。
 
-公开结论：7709。状态：正式复核。
+1. 只读打开.openclaw/state/openclaw.sqlite。
 
-方法：从原始对话定位询价代码，保留前导零规则。
+2. 查看cron_jobs中的任务定义，核对任务描述与调度周期。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 635,636`。
+3. 把“每小时检查邮件”作为配置内容对应B，并单独说明执行状态是否有证据。
 
-### Q99 邮件草稿拼写处理
+验证依据或核验要求：任务定义同时支持周期和工作内容。
 
-公开结论：C。状态：正式复核。
+易错点：存在定时任务定义不等于每次执行成功。
 
-方法：比较原始草稿与代理最终处理回复。
+#### Q85 最早Chrome搜索词
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 505,504`。
+状态：正式复核。公开结论：openclaw。
 
-### Q100 所传APK原名
+证据定位：CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Google/Chrome/User Data/Default/History；keyword_search_terms joined urls and visits; first visit id=1
 
-公开结论：Tronic.apk。状态：正式复核。
+方法依据：复现说明。
 
-方法：关联消息、媒体元数据和导出的APK，保留原名大小写。
+1. 打开Chrome Default配置目录中的History副本。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=574 with sender group member and saved contact mapping`。
+2. 关联keyword_search_terms、urls和visits，将关键词对应到实际访问记录。
 
-### Q101 筹备场地房间
+3. 按访问时间/访问顺序排序，检查最早相关记录；本场定位first visit id=1。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+验证依据或核验要求：最早搜索词为openclaw，来源关联须指向同一URL与访问。
 
-方法：结合场地筹备连续对话确定房间；公开稿省略具体位置。
+易错点：SQL物理行顺序和数据库记录插入顺序不一定是访问先后。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 292`。
+#### Q86 默认浏览器程序
 
-### Q102 索取二维码用途
+状态：正式复核。公开结论：A（chrome.exe）。
 
-公开结论：B。状态：正式复核。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/NTUSER.DAT；Software/Microsoft/Windows/Shell/Associations/UrlAssociations/http/UserChoice; https/UserChoice；/case/检材分析数据/未指定持有人/12/基本信息/默认浏览器/data.csv
 
-方法：结合索取二维码前后消息判断用途。
+方法依据：复现说明。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 715,716,717,718,733,734,735`。
+1. 读取NTUSER.DAT中的http和https UserChoice。
 
-### Q103 索取二维码次数
+2. 用其处理程序标识回溯注册程序及可执行文件。
 
-公开结论：B。状态：正式复核。
+3. 对照火眼默认浏览器分析表，确认目标是chrome.exe。
 
-方法：仅统计索取行为对应消息，不重复计发送回应。
+验证依据或核验要求：两种协议关联与分析表相互核对，答案A。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；[用户] chat session Z_PK=3`。
+易错点：内存里存在Edge进程不能推翻默认浏览器配置。
 
-### Q104 聊天提及人员
+#### Q87 提示注入发生日期
 
-公开结论：[敏感值不公开]。状态：正式复核。
+状态：正式复核。公开结论：2026-08-06。
 
-方法：定位原对话列出的人员；公开稿省略身份。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 16；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 299,546`。
+方法依据：复现说明。
 
-### Q105 SIM卡ICCID
+1. 定位Outlook恶意内容邮件及其接收时间。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+2. 在对应OpenClaw会话第16行附近找到实际读取/处理该邮件的内容。
 
-方法：读取SIM信息并对应设备记录。
+3. 对齐时间语义与时区后确定提示注入出现日期。
 
-证据定位：`CL-02.bin/分区1/iDevice_info.txt；line26 and line50`。
+验证依据或核验要求：本场日期2026-08-06；应保留邮件与会话关联。
 
-### Q106 桌面端会话Chatroom ID
+易错点：邮件投递、程序读取、后续执行是不同事件，不能只凭任意一个文件修改日期。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q88 恶意内容投递载体
 
-方法：区分会话ZCONTACTJID与联系号码ZCONTACTIDENTIFIER，并核对消息端点。
+状态：正式复核。公开结论：A（电子邮件）。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8; ZCONTACTIDENTIFIER is phone JID, ZCONTACTJID is LID`。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/.openclaw/agents/main/sessions/[UUID].jsonl；JSONL line 16；/case/检材分析数据/未指定持有人/12/Outlook/[标识已脱敏]/Inbox/mail/data.csv；CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Microsoft/Outlook/[标识已脱敏]；/None/根目錄 - 信箱/IPM_SUBTREE/Inbox
 
-### Q107 该联系人名称
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 定位恶意内容本身在原始邮件中的位置。
 
-方法：在相同会话读取联系人显示名，不用电话号码替代。
+2. 查看OpenClaw会话输入，确认内容经邮件进入处理流程。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8`。
+3. 把投递载体归类为电子邮件，对应选项A。
 
-### Q108 该联系人LID
+验证依据或核验要求：原邮件与会话输入包含同一来源内容。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+易错点：攻击目标工具名称不是投递载体；不能执行邮件中的指令来验证。
 
-方法：从同一会话与消息端点核对LID。
+#### Q89 图片最初存入方式
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8`。
+状态：正式复核。公开结论：B（互联网下载）。
 
-### Q109 联系人发送消息数
+证据定位：CL-01.e01/Operating_System/Users/[用户]/AppData/Local/Google/Chrome/User Data/Default/History；downloads id=8 and downloads_url_chains
 
-公开结论：147。状态：正式复核。
+方法依据：复现说明。
 
-方法：按相同会话和发送方向统计消息，排除本机发出消息。
+1. 打开Chrome History中的downloads。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE session 8 received text rows`。
+2. 定位下载记录id=8，读取保存目标和下载相关信息。
 
-### Q110 会话主键
+3. 关联downloads_url_chains，检查该下载的来源与跳转链。
 
-公开结论：8。状态：正式复核。
+验证依据或核验要求：下载记录证明目标图片以互联网下载方式进入设备，对应B。
 
-方法：读取 ZWACHATSESSION.Z_PK。
+易错点：后来复制到其他目录或被Photos打开，不会把最初来源改为拍摄。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION primary key`。
+#### Q90 Photos最早打开的文件
 
-### Q111 非原生相机照片
+状态：正式复核。公开结论：WhatsApp Image 2026-08-03 at 16.54.57 (1).jpeg。
 
-公开结论：IMG_0011.JPG。状态：正式复核。
+证据定位：CL-01.e01/Operating_System/Users/[用户]/AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations/a52b0784bd667468.automaticDestinations-ms；DestList version4; entry_number=1; earliest image entry; all 4 extant records parsed；/case/检材分析数据/未指定持有人/12/用户痕迹/最近访问的项目/data.csv
 
-方法：关联 ZASSET、ZADDITIONALASSETATTRIBUTES 和 ZCLOUDMASTER；包含匹配WAL。
+方法依据：复现说明。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.`。
+1. 读取a52b0784bd667468.automaticDestinations-ms中的DestList。
 
-### Q112 拍摄应用
+2. 按v4结构解析全部4条现存记录，记录目标文件与访问相关时间/序号。
 
-公开结论：C。状态：正式复核。
+3. 比较图片记录，取本场最早对应entry_number=1的文件。
 
-方法：读取照片来源应用属性，与资源记录对应。
+验证依据或核验要求：与最近访问项目分析表交叉核对，得到该WhatsApp图片名。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.`。
+易错点：这是现存JumpList范围内的结论，不是证明设备历史上从未打开过其他图片。
 
-### Q113 照片原始文件名
+### CL-02 WhatsApp与照片
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q91 系统版本
 
-方法：读取原始文件名字段，不用设备重命名后的名称替代。
+状态：正式复核。公开结论：26.5。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.`。
+证据定位：CL-02.bin/分区1/iDevice_info.txt；line84 and line49
 
-### Q114 Cloud Master GUID
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 打开CL-02分区1的iDevice_info.txt。
 
-方法：读取对应Cloud Master记录的唯一标识字段。
+2. 读取系统版本字段，核对第84行和第49行相关版本信息。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.`。
+3. 记录26.5，不把构建号或应用版本当系统版本。
 
-### Q115 iCloud同步时间
+验证依据或核验要求：两处设备属性对照一致。
 
-公开结论：C。状态：正式复核。
+易错点：不同设备的同名信息文件不可混用。
 
-方法：区分创建、修改、导入和云端同步时间，转换UTC+8。
+#### Q92 IANA时区
 
-证据定位：`CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.`。
+状态：正式复核。公开结论：C。
 
-### Q116 原图文件传送群组JID
+证据定位：CL-02.bin/分区1/iDevice_info.txt；line100
 
-公开结论：[敏感值不公开]。状态：正式复核。
+方法依据：复现说明。
 
-方法：关联文件型消息与原始图片媒体项，定位群组。
+1. 在CL-02的iDevice_info.txt第100行附近定位时区字段。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6`。
+2. 读取IANA时区标识，而非只取当前UTC偏移。
 
-### Q117 该群组名称
+3. 按标识语义对应选项C。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+验证依据或核验要求：原始时区配置字段提供依据。
 
-方法：读取同一群组会话的标题。
+易错点：多个IANA时区可能有相同偏移，不能仅凭UTC+8判断唯一地区。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6`。
+#### Q93 AirDrop标识
 
-### Q118 原图文件传送次数
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：2。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Library/Preferences/com.apple.sharingd.plist；top-level key AirDropID
 
-方法：按文件类型与图像资源逐条计数。
+方法依据：复现说明。
 
-证据定位：`CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6`。
+1. 读取com.apple.sharingd.plist，按实际格式解析plist。
 
-## 跨检材与COM-01内存
+2. 定位顶层AirDropID。
 
-### Q119 跨检材原始照片缺失设备
+3. 保留字符串原值并记录键路径。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+验证依据或核验要求：核对来源是sharingd偏好文件的AirDropID。
 
-方法：跨手机比对消息附件、文件清单及实际文件内容；缺失要有完整检索范围。
+易错点：设备名称、蓝牙地址、Apple账号与AirDropID不是同一字段。
 
-证据定位：`CM-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+#### Q94 头像服饰颜色
 
-### Q120 内存采集系统时间
+状态：正式复核。公开结论：C。
 
-公开结论：2026-08-07 15:02:29。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Media/Profile/[长编号]-[长编号].jpg；Original WhatsApp own profile photograph
 
-方法：读取 windows.info 的 SystemTime，转换UTC+8。
+方法依据：复现说明。
 
-证据定位：`COM-01_ram.raw；读取 windows.info 的 SystemTime，转换UTC+8。`。
+1. 在WhatsApp Media/Profile目录定位本机原始头像。
 
-### Q121 计算器进程PID
+2. 打开完整原图，确认所观察人物及衣着部位。
 
-公开结论：18652。状态：正式复核。
+3. 按可见服饰颜色对应题目选项C。
 
-方法：从进程列表定位Calculator的真实PID。
+验证依据或核验要求：以原图目视结果作答，保留图像来源。
 
-证据定位：`COM-01_ram.raw；从进程列表定位Calculator的真实PID。`。
+易错点：缩略图、压缩色偏或聊天内其他人的头像可能导致误判。
 
-### Q122 explorer子进程总数
+#### Q95 电子名片联系人
 
-公开结论：14。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：对所有explorer.exe PID求子进程并集，检查父PID语义。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；Sent contact card to [用户]; Ching Fung / +[长编号]
 
-证据定位：`COM-01_ram.raw；对所有explorer.exe PID求子进程并集，检查父PID语义。`。
+方法依据：复现说明。
 
-### Q123 浏览器明文凭据
+1. 在ChatStorage.sqlite定位发送电子名片的消息。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+2. 关联名片附件，读取联系人姓名与号码等名片内容。
 
-方法：内存片段与对应浏览器保存凭据记录交叉定位；公开稿不保留秘密值。
+3. 核对接收方及前后对话，确认题目所问的名片。
 
-证据定位：`COM-01_ram.raw；内存片段与对应浏览器保存凭据记录交叉定位；公开稿不保留秘密值。`。
+验证依据或核验要求：消息、附件和上下文指向同一次名片发送。
 
-### Q124 最近退出的远控进程
+易错点：发送者、接收者和名片里的人可能是三个人。
 
-公开结论：2026-08-07 11:20:54。状态：正式复核。
+#### Q96 群组唯一标识
 
-方法：筛选已终止rustdesk.exe且ExitTime有效的记录，取最大退出时间。
+状态：待复核或未解。公开结论：未定。
 
-证据定位：`COM-01_ram.raw；筛选已终止rustdesk.exe且ExitTime有效的记录，取最大退出时间。`。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；Two groups exist; preceding venue/preparation context refers to first Tronic Working Group
 
-### Q125 Edge已加载DLL
+方法依据：未解后续步骤。
 
-公开结论：ABC（ucrtbase.dll、ntdll.dll、version.dll）。状态：正式复核。
+1. 列出ChatStorage.sqlite中候选群组及其会话标识。
 
-方法：检查实际msedge.exe进程的模块加载列表；仅证明加载，不能证明Edge独有或PE直接导入。
+2. 追踪题目前后涉及筹备场地的对话，检查是否能唯一承接某一群组。
 
-证据定位：`COM-01_ram.raw；检查实际msedge.exe进程的模块加载列表；仅证明加载，不能证明Edge独有或PE直接导入。`。
+3. 若题干仍不能排除第二群组，保留两个候选及各自上下文，不强行选一个。
 
-边界：题面edge.exe按产品简称处理，实际是msedge.exe；已加载不等于产品专有或PE静态直接导入。
+验证依据或核验要求：已有记录确认存在多个群组，单独题面不能唯一定位。
 
-### Q126 Hive数量最少的用户
+易错点：承接上下文的合理候选不能自动升级为无歧义答案。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+结论边界：题目未指明哪一群组；承接前题可支持候选，但单独题面不足以唯一选择。
 
-方法：按用户对应Hive路径计数，处理同名或重复映射。
+#### Q97 定时任务失败原因
 
-证据定位：`COM-01_ram.raw；按用户对应Hive路径计数，处理同名或重复映射。`。
+状态：正式复核。公开结论：D。
 
-### Q127 采集时仍登录的用户
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 484,485
 
-公开结论：[敏感值不公开]。状态：正式复核。
+方法依据：复现说明。
 
-方法：结合登录会话与用户映射，不以目录存在推断仍登录。
+1. 定位ZWAMESSAGE的Z_PK 484和485。
 
-证据定位：`COM-01_ram.raw；结合登录会话与用户映射，不以目录存在推断仍登录。`。
+2. 按时间顺序读请求及任务失败回复，确认它们属于同一任务交互。
 
-## WKH-01：Android与消息隐写
+3. 从回复提取失败原因并对应选项D。
 
-### Q128 设备制造商
+验证依据或核验要求：原因来自实际失败回复而不是对调度配置的猜测。
 
-公开结论：samsung。状态：正式复核。
+易错点：任务未执行、执行出错、结果发送失败是不同原因。
 
-方法：读取getprop中的制造商属性。
+#### Q98 询价证券代码
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+状态：正式复核。公开结论：7709。
 
-### Q129 设备型号
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 635,636
 
-公开结论：SM-G9980。状态：正式复核。
+方法依据：复现说明。
 
-方法：读取getprop中的产品型号。
+1. 定位ZWAMESSAGE的Z_PK 635和636。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+2. 对照询价请求与回应，识别证券代码而非数量或价格。
 
-### Q130 出厂初始API级别
+3. 按题目格式保留代码7709。
 
-公开结论：C。状态：正式复核。
+验证依据或核验要求：两条相邻消息的语境共同确定代码含义。
 
-方法：读取初始API属性，区别当前SDK级别。
+易错点：代码应作为字符串处理，不能无条件去掉前导零。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+#### Q99 邮件草稿拼写处理
 
-### Q131 安全补丁日期
+状态：正式复核。公开结论：C。
 
-公开结论：2026-01-01。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 505,504
 
-方法：读取ro.build.version.security_patch。
+方法依据：复现说明。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+1. 读取ZWAMESSAGE第504和505条记录。
 
-### Q132 构建指纹特征
+2. 比较用户原始邮件草稿与代理关于处理方式的回复。
 
-公开结论：B。状态：正式复核。
+3. 检查拼写错误被保留还是改正，再对应选项C。
 
-方法：拆分构建指纹各段并与选项比较。
+验证依据或核验要求：以原草稿和明确处理回复对照，不能只看润色后的摘录。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+易错点：“发现错字”不等于“已经修改错字”。
 
-### Q133 显示构建版本
+#### Q100 所传APK原名
 
-公开结论：AP3A.240905.015.A2.G9980ZHSGHZB1。状态：正式复核。
+状态：正式复核。公开结论：Tronic.apk。
 
-方法：读取面向设置界面显示的完整build ID。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=574 with sender group member and saved contact mapping
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+方法依据：复现说明。
 
-### Q134 芯片型号
+1. 定位ZWAMESSAGE Z_PK=574及其媒体记录。
 
-公开结论：SM8350。状态：正式复核。
+2. 核对群组成员发送方与联系人映射，确认题目指向的附件。
 
-方法：读取芯片/平台属性。
+3. 将消息附件原名与实际导出APK对应，记录Tronic.apk。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+验证依据或核验要求：消息、媒体类型和导出文件相互匹配。
 
-### Q135 市场销售代码
+易错点：导出工具生成的UUID文件名不一定是聊天中发送的原始名称。
 
-公开结论：TGY。状态：正式复核。
+#### Q101 筹备场地房间
 
-方法：读取销售代码/Carrier ID，区别当前SIM运营商。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 292
 
-### Q136 SIM移动国家代码
+方法依据：复现说明。
 
-公开结论：454。状态：正式复核。
+1. 读取ZWAMESSAGE Z_PK=292并向前后扩展查看。
 
-方法：读取SIM1运营商数字码的MCC部分。
+2. 辨别筹备地点的房间号、邻近地点和后续变更是否分别出现。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+3. 按本题指定的筹备阶段记录房间。
 
-### Q137 出厂语言地区
+验证依据或核验要求：结论必须由该阶段的连续对话支持。
 
-公开结论：D。状态：正式复核。
+易错点：“near某房间”与“就是该房间”语义不同，不能只截取数字。
 
-方法：读取出厂语言和地区属性。
+#### Q102 索取二维码用途
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+状态：正式复核。公开结论：B。
 
-### Q138 Verified Boot与Bootloader
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 715,716,717,718,733,734,735
 
-公开结论：B。状态：正式复核。
+方法依据：复现说明。
 
-方法：综合verifiedbootstate、锁定状态及引导安全属性。
+1. 读取Z_PK 715—718及733—735相关记录。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+2. 把索取二维码的文字、回应和随后图片按时间配对。
 
-### Q139 用户数据加密方式
+3. 从索取理由确定用途，对应选项B。
 
-公开结论：C。状态：正式复核。
+验证依据或核验要求：用途由请求语句和前后事件支持。
 
-方法：读取crypto状态与类型，区分文件级与全盘加密。
+易错点：二维码图样本身通常不能说明索取人要做什么。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+#### Q103 索取二维码次数
 
-### Q140 完整启动原因
+状态：正式复核。公开结论：B。
 
-公开结论：B。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；[用户] chat session Z_PK=3
 
-方法：保留完整bootreason字符串。
+方法依据：复现说明。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+1. 限定题目对象所在会话Z_PK=3。
 
-### Q141 ADB运行属性绝对偏移
+2. 筛选明确发出索取二维码请求的消息，并按一次请求事件核对。
 
-公开结论：B。状态：正式复核。
+3. 排除对方发送二维码、确认回复等回应消息后计数。
 
-方法：将导出属性的字节位置映射回原始镜像绝对偏移，避免把行内偏移当镜像偏移。
+验证依据或核验要求：计数对象是索取行为，而非图片总数或所有含QR的文字行。
 
-证据定位：`local-artifact/WKH-01/WKH-01/WKH-01.bin；原镜像偏移 0x1F8A9A80`。
+易错点：一次请求可能伴随多条回复，不能逐行累加成多次请求。
 
-### Q142 主要CPU架构
+#### Q104 聊天提及人员
 
-公开结论：C。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：读取主要ABI/CPU架构字段。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK 299,546
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+方法依据：复现说明。
 
-### Q143 固件构建时间
+1. 读取ZWAMESSAGE Z_PK=299和546。
 
-公开结论：A。状态：正式复核。
+2. 结合前后对话，区分被提及的人员和当前聊天双方。
 
-方法：核对构建日期字符串和时间戳字段。
+3. 按题目要求摘录人员名称，保留称呼对应关系。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+验证依据或核验要求：人名应由原句中的语法角色和上下文共同定位。
 
-### Q144 Bootloader版本
+易错点：群成员名单不能替代聊天实际提及人员。
 
-公开结论：G9980ZHSGHZB1。状态：正式复核。
+#### Q105 SIM卡ICCID
 
-方法：读取bootloader版本，区别显示build ID。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out`。
+证据定位：CL-02.bin/分区1/iDevice_info.txt；line26 and line50
 
-### Q145 Play商店账号
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 打开CL-02的iDevice_info.txt。
 
-方法：读取Play商店账号关联记录，只本地保留邮箱。
+2. 在第26与50行附近核对SIM信息与ICCID字段。
 
-证据定位：`WKH-01.bin/分区1/data_backup/ABR/device_info.json`。
+3. 按字符串完整抄录，保留可能的前导零。
 
-### Q146 云媒体提供程序组件
+验证依据或核验要求：两处SIM相关记录与同一设备对应。
 
-公开结论：B。状态：正式复核。
+易错点：ICCID、IMSI、IMEI和电话号码不是同一个编号。
 
-方法：检查包的Activity Intent Filter及云媒体设置Action。
+#### Q106 桌面端会话Chatroom ID
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.apps.photos.out`。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-### Q147 Drive域名跳转规则
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8; ZCONTACTIDENTIFIER is phone JID, ZCONTACTJID is LID
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：核对同一ActivityAlias的全部filter、hostname与路径条件；不能只看某一孤立域名。
+1. 在ChatStorage.sqlite查询ZWACHATSESSION Z_PK=8。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.apps.docs.out`。
+2. 比较ZCONTACTJID和ZCONTACTIDENTIFIER，识别本条记录中的LID与电话JID。
 
-边界：同一DriveOpenUrlActivityAlias匹配多个候选hostname；题目未给组件/路径，不能唯一选。
+3. 用该会话147条对方文本及23条本机消息的端点核对对应关系。
 
-### Q148 Gmail实际包名
+4. 对照iLEAPP Chat ID取ZCONTACTJID的映射，修正早期误取电话号码字段。
 
-公开结论：B。状态：正式复核。
+验证依据或核验要求：会话字段、消息端点和独立解析器映射支持相同LID。
 
-方法：核对系统实际注册包名。
+易错点：该结论不是火眼聊天表现场验证；单个消息ID前缀也不能泛化为所有版本的客户端定律。
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.gm.out`。
+#### Q107 该联系人名称
 
-### Q149 消息隐写机制
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：A（零宽字符隐写）。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8
 
-方法：检查文本Unicode码点分布，确认不可见字符承载数据。
+方法依据：复现说明。
 
-证据定位：`WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15`。
+1. 定位与Q106相同的ZWACHATSESSION Z_PK=8。
 
-### Q150 隐写有效载荷还原
+2. 读取该条的联系人显示名字段。
 
-公开结论：C；完整有效载荷不公开。状态：正式复核。
+3. 用会话标识保持对象一致，再抄录名称。
 
-方法：按8种字符映射、位序、帧结构和xorshift32解码，最后验证CRC32。
+验证依据或核验要求：名称、会话主键和LID位于同一目标会话。
 
-证据定位：`WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15`。
+易错点：昵称可变化，不能凭名字相同就认定两条会话为同一人。
 
-### Q151 Threads实际包名
+#### Q108 该联系人LID
 
-公开结论：B。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：读取Threads包的实际注册名。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION Z_PK=8
 
-证据定位：`WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.instagram.barcelona.out`。
+方法依据：复现说明。
 
-### Q152 联系人底层LID
+1. 保持目标会话Z_PK=8不变。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+2. 读取ZCONTACTJID中的LID，而不是ZCONTACTIDENTIFIER中的电话JID。
 
-方法：关联一对一会话和联系人映射，区别手机号与LID。
+3. 核对同会话收发消息端点，保留完整后缀。
 
-证据定位：`WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15`。
+验证依据或核验要求：本题与Q106最终指向同一个内部LID，符合原字段关系。
 
-### Q153 场地变更后的房间
+易错点：“两题答案相同”不是错误证据，关键是每题都回到正确字段。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q109 联系人发送消息数
 
-方法：按消息顺序区分旧地点与最后变更。
+状态：正式复核。公开结论：147。
 
-证据定位：`WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15`。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE session 8 received text rows
 
-### Q154 现场人数
+方法依据：复现说明。
 
-公开结论：D。状态：正式复核。
+1. 在ZWAMESSAGE限定ZCHATSESSION=8。
 
-方法：定位请求清点与随后回复，避免误计聊天参与人数。
+2. 按发送方向选出对方发来的文本消息，排除本机发送和系统事件。
 
-证据定位：`WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15`。
+3. 计数并检查稳定消息标识是否重复。
 
-## WC-01：通信、附件与VIP页面
+验证依据或核验要求：原记录为147条接收文本，去重消息数同样支持147。
 
-### Q155 指定通话时长
+易错点：148条含系统事件的接收记录与147条接收文本不是同一口径。
 
-公开结论：36。状态：正式复核。
+#### Q110 会话主键
 
-方法：筛选指定呼出记录，使用实际duration，区别振铃或失败尝试。
+状态：正式复核。公开结论：8。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata`。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWACHATSESSION primary key
 
-### Q156 WhatsApp来电号码
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 由目标消息关联到ZWACHATSESSION。
 
-方法：从WhatsApp通话记录读取发起方标识并对应号码。
+2. 在目标会话读取Z_PK。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata`。
+3. 确认值8是数据库本地会话主键，并与Q106对象一致。
 
-### Q157 VIP购买页面路由
+验证依据或核验要求：会话关联与主键列一致。
 
-公开结论：ProductShop。状态：正式复核。
+易错点：Z_PK不是JID、LID或全球唯一账号标识。
 
-方法：反汇编同案APK的Hermes导航逻辑，VIP检查通过后跳转ProductShop。
+#### Q111 非原生相机照片
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；local-artifact/team/members/P01_CL02/exports/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/d/3/[UUID].apk`。
+状态：正式复核。公开结论：IMG_0011.JPG。
 
-边界：WC聊天与同案CL-02导出APK已独立核验；COM-02相应TSX源码交叉检查尚未完成。
+证据定位：CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.
 
-### Q158 指定批次附件类型
+方法依据：复现说明。
 
-公开结论：D。状态：正式复核。
+1. 连同匹配WAL打开Photos.sqlite副本。
 
-方法：按同一批消息的媒体类型枚举，不以文件扩展名替代消息类型。
+2. 围绕ZASSET Z_PK=11，关联ZADDITIONALASSETATTRIBUTES和ZCLOUDMASTER对应资源。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+3. 读取库内文件名及来源属性，确认目标照片为IMG_0011.JPG。
 
-### Q159 照片发送附件类型
+验证依据或核验要求：关联应依实际外键关系核对，不能因几张表的主键恰好都为11就假定通用连接规则。
 
-公开结论：C。状态：正式复核。
+易错点：仅有IMG格式文件名不证明它由原生相机拍摄。
 
-方法：读取媒体消息类型及附件元数据。
+#### Q112 拍摄应用
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+状态：正式复核。公开结论：C。
 
-### Q160 订单照片中的商品
+证据定位：CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.
 
-公开结论：C。状态：正式复核。
+方法依据：复现说明。
 
-方法：目视原始订单照片的商品内容，区别页面路由名称。
+1. 保持Q111同一照片资源。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+2. 读取照片来源或导入应用属性，记录应用标识及显示名称。
 
-### Q161 指定文字的消息ID
+3. 将该属性与题目选项对应，并说明它能直接证明的是来源/导入应用。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+验证依据或核验要求：本场依据照片来源属性得到选项C；若要严格证明拍摄行为，还需要原图元数据或相机生成证据。
 
-方法：从指定文字消息读取稳定消息ID。
+易错点：导入应用不必等于实际拍摄应用，答辩时不要扩大字段含义。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+#### Q113 照片原始文件名
 
-### Q162 实体取货位置
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.
 
-方法：结合连续聊天定位取货地点，公开稿不公开精确位置。
+方法依据：复现说明。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+1. 在Q111目标资源的附加属性中定位原始文件名字段。
 
-### Q163 Safari搜索词
+2. 将原始名称与ZASSET当前库内名称并列比较。
 
-公开结论：yahoo finance。状态：正式复核。
+3. 按题目保留原始名称的大小写与扩展名。
 
-方法：解析Safari历史URL中的检索参数并保留空格和大小写。
+验证依据或核验要求：原始名称应与同一个照片资源关联。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Library/Safari/History.db`。
+易错点：不能把IMG_0011.JPG这个重命名后的库内名称当原始文件名。
 
-### Q164 Signal包标识
+#### Q114 Cloud Master GUID
 
-公开结论：org.whispersystems.signal。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：读取应用注册Bundle Identifier。
+证据定位：CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.
 
-证据定位：`WC-01.bin/分区1/var/Manifest.plist`。
+方法依据：复现说明。
 
-### Q165 图片实际存储路径
+1. 从目标照片关联到ZCLOUDMASTER对应记录。
 
-公开结论：B。状态：正式复核。
+2. 读取Cloud Master唯一标识字段。
 
-方法：以消息的media路径关联实际图像文件，不能根据缩略图路径推断。
+3. 保留完整字符，核对未误取本地资源UUID或文件名。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+验证依据或核验要求：同资源关联链是GUID归属依据。
 
-### Q166 HEIC原始GPS
+易错点：不同ID列看起来都像长字符串，但语义不同。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q115 iCloud同步时间
 
-方法：直接读取原始HEIC的EXIF GPS；数据库副本存在尾数差异时按题目原文件口径。
+状态：正式复核。公开结论：C。
 
-证据定位：`WC-01.bin/分区1/var/mobile/Media/DCIM/100APPLE/IMG_0010.HEIC；WC-01.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite`。
+证据定位：CL-02.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite；ZASSET Z_PK=11; ZADDITIONALASSETATTRIBUTES Z_PK=11; ZCLOUDMASTER Z_PK=11. Original export includes matching WAL.
 
-## WW-01：iOS、媒体与群组
+方法依据：复现说明。
 
-### Q167 系统版本
+1. 列出目标照片的创建、修改、导入和云相关时间字段。
 
-公开结论：26.6。状态：正式复核。
+2. 依据题意确定本场采用的同步时间口径，记录原始字段及值。
 
-方法：读取iDevice_info.txt系统版本。
+3. 按该字段纪元和单位转换，再转UTC+8并对应选项C。
 
-证据定位：`WW-01.bin/分区1/iDevice_info.txt；line 83`。
+验证依据或核验要求：复现时必须先核对字段语义；导入时间不能在没有解释时直接改称云端同步完成时间。
 
-### Q168 设备序列号
+易错点：同一照片的多个时间相近不代表可以互换。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q116 原图文件传送群组JID
 
-方法：读取设备序列号，公开稿脱敏。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`WW-01.bin/分区1/iDevice_info.txt；line 91`。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6
 
-### Q169 主要认证邮箱
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 定位ZWAMESSAGE Z_PK=110、111。
 
-方法：核对设备认证账号记录，公开稿脱敏。
+2. 核对消息以文件形式发送且媒体对应目标原图。
 
-证据定位：`WW-01.bin/分区1/iDevice_info.txt；line 300`。
+3. 关联到ZWACHATSESSION Z_PK=6，读取完整群组JID。
 
-### Q170 服务绑定电话
+验证依据或核验要求：消息→媒体→会话的关联共同限定群组。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+易错点：不能用照片出现在某群缩略图中替代原图以文件发送的证据。
 
-方法：核对服务账号与号码绑定记录，公开稿脱敏。
+#### Q117 该群组名称
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Library/Preferences/group.net.whatsapp.WhatsApp.shared.plist；FullUserName, OwnJabberID, LastOwnJabberID`。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-### Q171 来电所用应用
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6
 
-公开结论：C。状态：正式复核。
+方法依据：复现说明。
 
-方法：从CallHistory应用来源标识确定服务。
+1. 沿Q116已确认的会话Z_PK=6。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata；ZCALLRECORD Z_PK=5`。
+2. 读取群组标题字段并核对相关消息发生时的群组语境。
 
-### Q172 Signal注册验证码
+3. 按原记录保留名称，而不是抄发送者显示名。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+验证依据或核验要求：名称和Q116群组JID必须来自同一会话。
 
-方法：读取sms.db中对应注册短信，公开稿不保留验证码。
+易错点：当前群名与创建时名称可能不同，须按题目时点。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Library/SMS/sms.db`。
+#### Q118 原图文件传送次数
 
-### Q173 储物柜图片路径
+状态：正式复核。公开结论：2。
 
-公开结论：C。状态：正式复核。
+证据定位：CL-02.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；ZWAMESSAGE Z_PK=110,111; ZWACHATSESSION Z_PK=6
 
-方法：从聊天媒体元数据定位储物柜原图。
+方法依据：复现说明。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；original file plus ChatStorage.sqlite ZWAMESSAGE Z_PK=295 / ZWAMEDIAITEM Z_PK=277`。
+1. 限定Q116同一目标原图及群组。
 
-### Q174 图片原始字节数
+2. 逐条核对Z_PK=110、111的媒体类型和附件对应关系。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 按独立发送消息计数，本场为2次。
 
-方法：读取同一原图实际文件长度，不使用缩略图或压缩后大小。
+验证依据或核验要求：两条记录都符合原图以文件发送的口径。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；entire original file byte count; ZWAMEDIAITEM Z_PK=277 ZFILESIZE`。
+易错点：重试、转发、缩略图和普通图片消息需按题意分别判断，不能只数同名文件。
 
-### Q175 交接地点
+### 跨检材与Windows内存
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q119 跨检材原始照片缺失设备
 
-方法：图像内容与聊天语境交叉核对，公开稿不列精确地点。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；second JPEG stream beginning at byte 76934`。
+证据定位：CM-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-### Q176 收款钱包
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 在所涉手机镜像中分别列出目标消息的附件关系及媒体目录。
 
-方法：识别图片/消息中的收款钱包，公开稿省略地址。
+2. 核对原图内容与实际文件，不以文件名相同或缩略图存在替代原图。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；second JPEG stream beginning at byte 76934`。
+3. 对未找到原图的设备记录检索路径、已覆盖目录及附件引用，最后比较各设备。
 
-### Q177 发送图片主文件名
+验证依据或核验要求：缺失结论依赖完整的已检查范围；本场记录包含CM-01聊天数据库关联。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+易错点：只搜索一个目录无命中，不能声称整部手机没有该图。
 
-方法：读取发送附件原始文件名，并按题意去扩展名。
+#### Q120 内存采集系统时间
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+状态：正式复核。公开结论：2026-08-07 15:02:29。
 
-### Q178 转账交易哈希
+证据定位：COM-01_ram.raw；读取 windows.info 的 SystemTime，转换UTC+8。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+方法依据：复现说明。
 
-方法：检查JPEG EOI后的追加ASCII内容；区分交易哈希与文件哈希。
+1. 确认COM-01_ram.raw属于对应内存案件。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/3/f/[UUID].jpg；ASCII appended after JPEG EOI`。
+2. 读取windows.info返回的SystemTime原始时间。
 
-### Q179 群组创建时间
+3. 按题意转换UTC+8，记录2026-08-07 15:02:29。
 
-公开结论：2026-07-30 17:11:36。状态：正式复核。
+验证依据或核验要求：保留原始UTC及转换过程，避免重复加8小时。
 
-方法：使用群组创建系统事件，转换UTC+8。
+易错点：文件复制时间和采集工具输出文件时间不能替代内存系统时间。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+#### Q121 计算器进程PID
 
-### Q180 群组原始名称
+状态：正式复核。公开结论：18652。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+证据定位：COM-01_ram.raw；从进程列表定位Calculator的真实PID。
 
-方法：追踪创建时标题及后续改名事件。
+方法依据：复现说明。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+1. 读取活动进程列表并定位Calculator对应进程。
 
-### Q181 指定房间
+2. 核对进程名称、PID及状态，必要时与扫描结果区分。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 记录实际PID18652。
 
-方法：依据指定消息确定房间，公开稿不列精确位置。
+验证依据或核验要求：PID来自目标进程记录，不由窗口标题推断。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+易错点：计算器可涉及多个进程，不要把宿主或父进程PID直接当目标PID。
 
-### Q182 二维码用途
+#### Q122 explorer子进程总数
 
-公开结论：D。状态：正式复核。
+状态：正式复核。公开结论：14。
 
-方法：结合二维码发送前后消息判断用途。
+证据定位：COM-01_ram.raw；对所有explorer.exe PID求子进程并集，检查父PID语义。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/9/3/[UUID].jpg；QR decoded offline via OpenCV QRCodeDetector.detectAndDecode`。
+方法依据：复现说明。
 
-### Q183 申请VIP的注册账号
+1. 找出全部explorer.exe进程及其PID。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+2. 在进程记录中筛选PPID属于该集合的直接子进程。
 
-方法：从申请VIP的原消息读取账号名，公开稿脱敏。
+3. 按实际进程身份去重后求并集，本场14个。
 
-证据定位：`WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite`。
+验证依据或核验要求：核对父PID与进程创建时间，避免PID复用导致不合理父子关系。
 
-## COM-02：宿主、应用、数据库与邮件
+易错点：只统计一个explorer实例或把全部后代当直接子进程都会改变口径。
 
-### Q184 Graph token文件大小
+#### Q123 浏览器明文凭据
 
-公开结论：未定。状态：待复核或未解。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：目标是宿主共享项目中的Graph token；先区分Windows与VM中同名副本。
+证据定位：COM-01_ram.raw；内存片段与对应浏览器保存凭据记录交叉定位；公开稿不保留秘密值。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+方法依据：复现说明。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+1. 在既有内存片段中定位浏览器相关凭据上下文。
 
-### Q185 Graph token文件名与SHA256
+2. 与相应浏览器保存凭据记录的站点和账号关系交叉定位。
 
-公开结论：未定。状态：待复核或未解。
+3. 只将题目要求的匹配结果保存在本地，并记录来源片段。
 
-方法：对上一题同一文件确认文件名和SHA256；未独立完成前不能照抄参考哈希。
+验证依据或核验要求：孤立明文字符串不够，需要站点/账号/浏览器记录的一致关联。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：当前遗留文件未恢复原值及完整偏移，不能把教程示例密码作为本案答案。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q124 最近退出的远控进程
 
-### Q186 Qwen工具调用解析器
+状态：正式复核。公开结论：2026-08-07 11:20:54。
 
-公开结论：hermes。状态：正式复核。
+证据定位：COM-01_ram.raw；筛选已终止rustdesk.exe且ExitTime有效的记录，取最大退出时间。
 
-方法：只读启动脚本的--tool-call-parser，不执行脚本。
+方法依据：复现说明。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/start_qwen_8000.sh；vLLM launch arguments --tool-call-parser`。
+1. 筛选rustdesk.exe进程记录。
 
-### Q187 移动访问令牌有效小时
+2. 保留已终止且ExitTime有效的记录，区分仍运行项和残留扫描项。
 
-公开结论：未定。状态：待复核或未解。
+3. 按退出时间排序取最近一次，按题目时间格式记录。
 
-方法：需读取当前服务配置中的访问令牌默认有效期。
+验证依据或核验要求：本场最终时间2026-08-07 11:20:54；核对该时间是退出而非创建。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：仅按PID大小或列表位置判断“最近”不可靠。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q125 Edge已加载DLL
 
-### Q188 默认Session Secret
+状态：正式复核。公开结论：ABC（ucrtbase.dll、ntdll.dll、version.dll）。
 
-公开结论：未定。状态：待复核或未解。
+证据定位：COM-01_ram.raw；检查实际msedge.exe进程的模块加载列表；仅证明加载，不能证明Edge独有或PE直接导入。
 
-方法：需读取会话密钥默认配置，公开稿不列秘密值。
+方法依据：复现说明。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+1. 定位实际名称msedge.exe的目标进程。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+2. 读取其模块加载列表并逐项查找ucrtbase.dll、ntdll.dll、version.dll。
 
-### Q189 二维码请求客户端版本
+3. 记录两份列表的可读范围：172条完整；另一份192条中12条名称不可读。
 
-公开结论：未定。状态：待复核或未解。
+4. 按“已加载”口径对应ABC，并明确缺失页限制。
 
-方法：需过滤UTC换算后的时间、二维码端点和设备元数据。
+验证依据或核验要求：三项在加载记录中有正面命中支持。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：已加载不等于Edge专有，也不等于PE导入表的直接依赖；不可读不等于不存在。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+结论边界：题面edge.exe按产品简称处理，实际是msedge.exe；已加载不等于产品专有或PE静态直接导入。
 
-### Q190 二维码请求端点
+#### Q126 Hive数量最少的用户
 
-公开结论：未定。状态：待复核或未解。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：需在访问日志核对实际请求路径，不能由APK静态字符串替代。
+证据定位：COM-01_ram.raw；按用户对应Hive路径计数，处理同名或重复映射。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+方法依据：复现说明。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+1. 枚举内存中可辨认Hive及其来源路径。
 
-### Q191 管理员二维码页面源码
+2. 按用户归属分组，处理同名Hive和重复映射。
 
-公开结论：未定。状态：待复核或未解。
+3. 比较各用户的有效计数，取题目要求的最少者。
 
-方法：需定位前端源代码页面及路由导入关系。
+验证依据或核验要求：核对分组依据是用户路径/映射，而非相似文件名。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：同一Hive多次映射不能无条件算作多份独立Hive。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q127 采集时仍登录的用户
 
-### Q192 币价刷新秒数
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：未定。状态：待复核或未解。
+证据定位：COM-01_ram.raw；结合登录会话与用户映射，不以目录存在推断仍登录。
 
-方法：需定位币价刷新配置及其时间单位。
+方法依据：复现说明。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+1. 读取内存中的登录会话相关记录。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+2. 将会话身份映射回用户，检查采集时的有效登录状态。
 
-### Q193 DHCP精确MAC对应主机
+3. 按题目范围列出仍登录用户，区分历史痕迹。
 
-公开结论：未定。状态：待复核或未解。
+验证依据或核验要求：结论依赖会话状态及用户映射共同支持。
 
-方法：精确比较租约MAC；相近MAC不是同一标识的证据。
+易错点：用户目录、注册表Hive或旧凭据存在，均不独立证明当前仍登录。
 
-证据定位：`COM-02宿主 ProgramData/VMware 的DHCP租约及备份；Tronic_s2轮转vmware日志。`。
+### WKH-01 系统属性与隐写
 
-边界：题面MAC一字节为fc，实际租约及另一VM日志为6c；相近标识仅是候选，不能声称精确命中。
+#### Q128 设备制造商
 
-### Q194 结算关联表外键目标
+状态：正式复核。公开结论：samsung。
 
-公开结论：A（transactions）。状态：成员复现待主复核。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-方法：检查setup.sql中transaction_id外键定义。
+方法依据：复现说明。
 
-证据定位：`Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql`。
+1. 打开WKH-01的system_backup/shell/getprop/getprop.out。
 
-### Q195 数据库IP与端口
+2. 定位制造商属性，保留键名和完整值。
 
-公开结论：[敏感值不公开]。状态：成员复现待主复核。
+3. 将samsung与型号、品牌等相邻属性区分后作答。
 
-方法：读取连接配置并确认是否被运行环境覆盖；当前仅共享项目默认配置完成。
+验证依据或核验要求：原始制造商属性支持samsung。
 
-证据定位：`Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/config.py`。
+易错点：不要将芯片厂商误作整机制造商。
 
-边界：共享项目默认配置已复现，当前VM运行配置覆盖关系尚待核对。
+#### Q129 设备型号
 
-### Q196 营业时段已完成结算批次
+状态：正式复核。公开结论：SM-G9980。
 
-公开结论：4。状态：成员复现待主复核。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-方法：先由catalog定位实际relfilenode，再按提交可见性、时段和completed筛选。
+方法依据：复现说明。
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/49490`。
+1. 在同一getprop.out定位产品型号属性。
 
-### Q197 金额字段加密格式
+2. 比较相邻产品名、设备代号，确认题目要求的是型号值。
 
-公开结论：fernet。状态：成员复现待主复核。
+3. 完整记录SM-G9980。
 
-方法：用加解密源码及已认证令牌验证Fernet，不能仅凭前缀猜格式。
+验证依据或核验要求：设备型号来自原始属性而非外观推断。
 
-证据定位：`Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/tronic_amount_crypto.py；Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql；/var/lib/postgresql/18/main/base/16389/49490`。
+易错点：市场宣传名称与内部型号可能不同。
 
-### Q198 已完成结算金额合计
+#### Q130 出厂初始API级别
 
-公开结论：14194443.00。状态：成员复现待主复核。
+状态：正式复核。公开结论：C。
 
-方法：对同一筛选集合逐条认证解密并以Decimal求和。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/49490`。
+方法依据：复现说明。
 
-### Q199 三类邮件状态字段
+1. 在getprop.out找初始API级别对应属性。
 
-公开结论：A（email_status、bank_email_status、otc_email_status）。状态：成员复现待主复核。
+2. 同时留意当前SDK字段，确认所取的是设备出厂初始级别。
 
-方法：读取数据库模型中的三类邮件状态字段。
+3. 将初始API值对应选项C。
 
-证据定位：`Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql；Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/models.py`。
+验证依据或核验要求：以属性名称的初始/当前语义区分数值。
 
-### Q200 数据库口令候选核验
+易错点：系统升级后当前SDK提高，不代表设备出厂API随之变化。
 
-公开结论：[敏感值不公开]。状态：成员复现待主复核。
+#### Q131 安全补丁日期
 
-方法：只对题目给定候选离线校验SCRAM StoredKey和ServerKey，不做网络登录。
+状态：正式复核。公开结论：2026-01-01。
 
-证据定位：`/var/lib/postgresql/18/main/global/1260`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-### Q201 数据库连接用户
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：成员复现待主复核。
+1. 在getprop.out定位ro.build.version.security_patch。
 
-方法：读取连接配置用户名；运行环境覆盖值待交叉检查。
+2. 读取日期字符串并保持年月日格式。
 
-证据定位：`Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/config.py`。
+3. 将2026-01-01作为安全补丁日期。
 
-边界：共享项目默认配置已复现，当前VM运行配置覆盖关系尚待核对。
+验证依据或核验要求：该键直接描述补丁日期。
 
-### Q202 Tronic操作系统与内存
+易错点：构建时间和系统安装时间不能替代安全补丁日期。
 
-公开结论：B（Ubuntu 64-bit、4096MiB）。状态：成员复现待主复核。
+#### Q132 构建指纹特征
 
-方法：读取Tronic.vmx的guestOS和memsize。
+状态：正式复核。公开结论：B。
 
-证据定位：`local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/Tronic.vmx；guestOS; memsize`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-### Q203 第一块网卡硬件型号
+方法依据：复现说明。
 
-公开结论：e1000。状态：成员复现待主复核。
+1. 找到完整构建指纹并保留原文。
 
-方法：读取ethernet0.virtualDev，不以宿主网卡型号替代。
+2. 按分隔符拆出品牌、产品/设备、版本、构建与类型等部分。
 
-证据定位：`local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/Tronic.vmx；ethernet0.virtualDev`。
+3. 逐项与题目描述比较，确定选项B。
 
-### Q204 独立数据库虚拟机名
+验证依据或核验要求：让每项判断都对应指纹中的具体段。
 
-公开结论：Tronic_s2。状态：成员复现待主复核。
+易错点：不能只看到某个版本号便推断其余构建特征。
 
-方法：关联VMware配置、虚拟机目录及角色证据。
+#### Q133 显示构建版本
 
-证据定位：`local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic_s2/Tronic_s2.vmx；displayName`。
+状态：正式复核。公开结论：AP3A.240905.015.A2.G9980ZHSGHZB1。
 
-### Q205 下午首次异常关机后启动
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：区分启动时读入的DICT cleanShutdown值与运行时Setting FALSE。
+1. 在getprop.out定位面向显示的完整构建版本值。
 
-证据定位：`COM-02宿主 Tronic虚拟机目录全部vmware*.log、mksSandbox日志及VMware宿主日志。`。
+2. 保留AP3A.240905.015.A2.G9980ZHSGHZB1全部分段。
 
-边界：已检日志中的两次异常关机启动均在本地上午；下午启动读入cleanShutdown=TRUE。运行中的Setting FALSE不表示上次异常退出，题证冲突未解。
+3. 与Bootloader等相近版本字段并列检查，避免截短。
 
-### Q206 工作区加载另一虚拟机的时间
+验证依据或核验要求：完整显示构建字符串与题目格式一致。
 
-公开结论：B（04:07:48 UTC）。状态：成员复现待主复核。
+易错点：只写尾部G9980版本会丢失前面的Android构建标识。
 
-方法：定位vmware.log中含另一台vmx路径的Workspace Session记录。
+#### Q134 芯片型号
 
-证据定位：`local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/vmware.log；line 270`。
+状态：正式复核。公开结论：SM8350。
 
-### Q207 首次虚拟磁盘锁定错误
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-公开结论：A（2026-08-03 11:52:03 UTC+8）。状态：成员复现待主复核。
+方法依据：复现说明。
 
-方法：对全部轮转日志按时间排序，寻找第一次磁盘锁定错误。
+1. 在getprop.out查芯片或平台相关属性。
 
-证据定位：`local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/vmware-2.log；line 673`。
+2. 区分硬件平台、CPU架构与整机型号。
 
-### Q208 指定价格请求源IP
+3. 按本题芯片型号记录SM8350。
 
-公开结论：未定。状态：待复核或未解。
+验证依据或核验要求：核对原属性明确对应芯片/平台对象。
 
-方法：需在指定分钟核对/api/price与实际/api/prices路径差异。
+易错点：arm64是架构，SM-G9980是设备型号，都不能替代SM8350。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+#### Q135 市场销售代码
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+状态：正式复核。公开结论：TGY。
 
-### Q209 代理转发后端节点
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：需用同一请求的代理记录关联upstream目标。
+1. 查getprop.out中的销售代码或Carrier ID相关属性。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+2. 区分出厂销售区域与当前SIM运营商信息。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+3. 记录TGY并按题目格式保留大小写。
 
-### Q210 生成二维码请求ID
+验证依据或核验要求：销售代码来自对应设备属性。
 
-公开结论：未定。状态：待复核或未解。
+易错点：当前使用香港SIM不能单独证明销售区域代码。
 
-方法：需同一来源、时段、成功状态及二维码端点共同筛选。
+#### Q136 SIM移动国家代码
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+状态：正式复核。公开结论：454。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-### Q211 Nginx实际访问日志名
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 在getprop.out定位SIM1运营商数字码。
 
-方法：需读取实际启用的Nginx配置，区别HTTP生效配置与HTTPS模板。
+2. 确认该字段为MCC/MNC组合而非电话号码。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+3. 按MCC部分取454。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+验证依据或核验要求：先确定SIM槽位再提取国家代码。
 
-### Q212 指定价格请求源IP选项
+易错点：双卡信息、MCC、MNC和销售代码不是同一指标。
 
-公开结论：未定。状态：待复核或未解。
+#### Q137 出厂语言地区
 
-方法：需确认指定时段第一个成功价格请求，不能仅套用相邻请求来源。
+状态：正式复核。公开结论：D。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+方法依据：复现说明。
 
-### Q213 API代理监听端口
+1. 定位设备出厂语言和地区属性。
 
-公开结论：未定。状态：待复核或未解。
+2. 将其与当前用户语言配置分别列出。
 
-方法：需核对API代理启动绑定端口及运行日志。
+3. 按题目要求用出厂属性对应选项D。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+验证依据或核验要求：字段语义明确指向出厂设置。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+易错点：当前界面语言可能被用户修改，不能代替出厂地区。
 
-### Q214 二维码请求IP与ID组合
+#### Q138 Verified Boot与Bootloader
 
-公开结论：未定。状态：待复核或未解。
+状态：正式复核。公开结论：B。
 
-方法：需同一条成功POST记录同时核对来源和request ID。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+方法依据：复现说明。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+1. 列出verifiedbootstate、锁定状态和相关安全启动属性。
 
-### Q215 登录设备UA与系统版本
+2. 把多个字段放在同一设备状态下解释，排除互相矛盾的理解。
 
-公开结论：未定。状态：待复核或未解。
+3. 按组合状态对应选项B。
 
-方法：需按日期、时间、设备型号及登录成功状态筛选元数据。
+验证依据或核验要求：多项属性共同支持启动验证与锁定状态的判断。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：仅一个布尔值不足以概括全部Verified Boot和Bootloader状态。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q139 用户数据加密方式
 
-### Q216 登录设备唯一标识
+状态：正式复核。公开结论：C。
 
-公开结论：未定。状态：待复核或未解。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-方法：需从同一登录记录读取Device ID，公开稿脱敏。
+方法依据：复现说明。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+1. 读取crypto状态与类型属性。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+2. 确认用户数据是否加密，并区分文件级加密与全盘加密类型。
 
-### Q217 客户端版本与构建号
+3. 将原始属性组合对应选项C。
 
-公开结论：未定。状态：待复核或未解。
+验证依据或核验要求：同时检查状态与类型，避免只凭encrypted字样选择具体机制。
 
-方法：需读取对应请求的app_version/app_build，不能用旧APK版本替代。
+易错点：“已加密”和“采用哪种加密方式”是不同问题。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+#### Q140 完整启动原因
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+状态：正式复核。公开结论：B。
 
-### Q218 日报主要收件人
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：需读取结算邮件环境配置，公开稿不列邮箱。
+1. 在getprop.out找到bootreason相关属性。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+2. 保留完整字符串及逗号等后缀信息。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+3. 按完整值对应选项B。
 
-### Q219 Graph客户端标识
+验证依据或核验要求：核对未因切分或显示截断丢失后缀。
 
-公开结论：未定。状态：待复核或未解。
+易错点：bootreason前半段相同的多个值可能表示不同启动上下文。
 
-方法：需读取正确项目Token JSON的客户端标识，不公开原值。
+#### Q141 ADB运行属性绝对偏移
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+状态：正式复核。公开结论：B。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+证据定位：local-artifact/WKH-01/WKH-01/WKH-01.bin；原镜像偏移 0x1F8A9A80
 
-### Q220 token_type与tenant
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 在导出属性文本定位init.svc.adbd对应内容。
 
-方法：需核对同一Token记录中的类型与tenant字段。
+2. 确定该文本片段在原镜像中的映射位置，而不是只取导出文本内偏移。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+3. 使用原镜像绝对字节位置核对目标字符串，本场0x1F8A9A80。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+验证依据或核验要求：应能从绝对偏移回读对应属性片段。
 
-### Q221 Token有效秒数
+易错点：文本行号、文件内偏移与整个镜像绝对偏移三者不能混用。
 
-公开结论：未定。状态：待复核或未解。
+#### Q142 主要CPU架构
 
-方法：需核对该Token记录的有效期字段及单位。
+状态：正式复核。公开结论：C。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+方法依据：复现说明。
 
-### Q222 日报与银行邮件路由
+1. 在getprop.out定位主要ABI/CPU架构属性。
 
-公开结论：未定。状态：待复核或未解。
+2. 区分首选ABI与兼容ABI列表。
 
-方法：需核对邮件路由实际环境变量及接收类别，公开稿不列邮箱。
+3. 按题目“主要”架构选择C。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+验证依据或核验要求：比较主要字段和兼容列表，确认选的是首选架构。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+易错点：设备支持32位应用不代表主要CPU架构是32位。
 
-### Q223 OTC邮件地址
+#### Q143 固件构建时间
 
-公开结论：未定。状态：待复核或未解。
+状态：正式复核。公开结论：A。
 
-方法：需读取同一环境配置中OTC收件地址，保留大小写于本地。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+方法依据：复现说明。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+1. 读取固件构建日期字符串及对应时间戳字段。
 
-## COM-02：WSL与OpenClaw
+2. 按时间戳的单位和显示时区转换。
 
-### Q224 OpenClaw工作目录与Provider
+3. 检查字符串与转换结果是否一致，再对应选项A。
 
-公开结论：C（WSL用户工作目录、Provider vllm）。状态：正式复核。
+验证依据或核验要求：两种表示方式交叉核对构建时间。
 
-方法：读取WSL主配置workspace及默认model的Provider前缀，区别API协议名称。
+易错点：补丁日期、首次启动时间和固件构建时间不同。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；agents.defaults.workspace; agents.defaults.model.primary`。
+#### Q144 Bootloader版本
 
-### Q225 数据库MCP命令
+状态：正式复核。公开结论：G9980ZHSGHZB1。
 
-公开结论：/home/[用户]/.openclaw/bin/postgres-isolated-mcp。状态：正式复核。
+证据定位：WKH-01.bin/分区1/system_backup/shell/getprop/getprop.out
 
-方法：读取mcp.servers对应command绝对路径；公开稿将用户目录匿名化。
+方法依据：复现说明。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；mcp.servers.postgres-isolated.command`。
+1. 定位bootloader版本属性。
 
-### Q226 DeepSeek Provider ID
+2. 读取完整G9980ZHSGHZB1，不带入显示构建ID的前缀。
 
-公开结论：vllm_gpu1。状态：正式复核。
+3. 与题目要求的Bootloader对象确认后作答。
 
-方法：定位DeepSeek模型条目所属providers键名。
+验证依据或核验要求：字段来自bootloader而非build display值。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm_gpu1`。
+易错点：显示构建版本可能包含同一尾串，但字段含义不同。
 
-### Q227 Qwen参数规模
+#### Q145 Play商店账号
 
-公开结论：D（32B）。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：从模型ID确认32B规模。
+证据定位：WKH-01.bin/分区1/data_backup/ABR/device_info.json
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.models[0].id`。
+方法依据：复现说明。
 
-### Q228 DeepSeek参数规模
+1. 打开data_backup/ABR/device_info.json。
 
-公开结论：C（14B）。状态：正式复核。
+2. 定位与Play商店关联的账号记录。
 
-方法：从模型ID确认14B规模。
+3. 核对服务归属后保留对应邮箱原文于本地。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm_gpu1.models[0].id`。
+验证依据或核验要求：确认该账号属于目标服务而非设备上任意Google账号。
 
-### Q229 17时结算任务名
+易错点：多个Google账号同时存在时，不能取第一条邮箱。
 
-公开结论：tronic-settlement-monitor-1700-close。状态：正式复核。
+#### Q146 云媒体提供程序组件
 
-方法：按17:00收市结算任务识别name，区别日报和营业监控。
+状态：正式复核。公开结论：B。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].name`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.apps.photos.out
 
-### Q230 17时任务ID与cron
+方法依据：复现说明。
 
-公开结论：A（目标任务ID、0 17 * * *；ID不公开）。状态：正式复核。
+1. 查看com.google.android.apps.photos.out的包组件转储。
 
-方法：核对同一任务ID、cron及时区。
+2. 查找云媒体设置相关Action及其匹配的Activity/Intent Filter。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].id/schedule`。
+3. 以组件完整身份对应选项B。
 
-### Q231 营业时间监控频率
+验证依据或核验要求：必须确认Action属于该组件的过滤器。
 
-公开结论：E（30分钟）。状态：正式复核。
+易错点：在整个包文件搜到Action字符串，不足以确定其归属组件。
 
-方法：解析营业监控cron的分钟列，区别1分钟自动审批任务。
+#### Q147 Drive域名跳转规则
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].schedule.expr`。
+状态：待复核或未解。公开结论：未定。
 
-### Q232 可检索记忆chunks数量
+证据定位：WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.apps.docs.out
 
-公开结论：C（0条）。状态：正式复核。
+方法依据：未解后续步骤。
 
-方法：只读SQLite并执行quick_check与SELECT COUNT(*) FROM chunks。
+1. 完整读取com.google.android.apps.docs.out中DriveOpenUrlActivityAlias。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/memory/main.sqlite；chunks`。
+2. 枚举其全部Intent Filter，记录action、category、hostname与path条件。
 
-### Q233 Gateway监听端口
+3. 将各候选域名逐一代入对应过滤器，检查是否同时允许多个候选。
 
-公开结论：18789。状态：正式复核。
+4. 因题目未唯一指定组件/路径而保留未定。
 
-方法：读取主配置gateway.port。
+验证依据或核验要求：同一Alias支持多个候选hostname；另一个Launcher过滤器不能取消这些规则。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；gateway.port`。
+易错点：不得选择一个孤立命中或按参考答案反推唯一域名。
 
-### Q234 Qwen服务地址
+结论边界：同一DriveOpenUrlActivityAlias匹配多个候选hostname；题目未给组件/路径，不能唯一选。
 
-公开结论：http://127.0.0.1:8000/v1。状态：正式复核。
+#### Q148 Gmail实际包名
 
-方法：读取Qwen Provider的baseUrl。
+状态：正式复核。公开结论：B。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.baseUrl`。
+证据定位：WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.google.android.gm.out
 
-### Q235 定时任务错误原因
+方法依据：复现说明。
 
-公开结论：C（timeout）。状态：正式复核。
+1. 打开com.google.android.gm.out。
 
-方法：读取jobs-state.json中lastErrorReason。
+2. 读取系统登记的包身份，确认它属于Gmail。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs-state.json；jobs.*.state.lastErrorReason`。
+3. 按实际包名与题目选项对应B。
 
-### Q236 WSL发行版版本与UID
+验证依据或核验要求：包登记信息比界面应用名称更直接。
 
-公开结论：C（Ubuntu、WSL2、UID 1000）。状态：正式复核。
+易错点：应用显示名可本地化，不能据显示名猜包名。
 
-方法：读取NTUSER.DAT的Lxss发行版键，核对DistributionName、Version及DefaultUid。
+#### Q149 消息隐写机制
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/host/partition-3/Users/[用户]/NTUSER.DAT；Software/Microsoft/Windows/CurrentVersion/Lxss/{[UUID]}`。
+状态：正式复核。公开结论：A（零宽字符隐写）。
 
-### Q237 Gateway绑定位置
+证据定位：WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15
 
-公开结论：loopback。状态：正式复核。
+方法依据：复现说明。
 
-方法：读取gateway.bind原值。
+1. 定位WKH-01已解密WhatsApp聊天中的可疑消息。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；gateway.bind`。
+2. 导出原始Unicode，逐字符查看码点及不可见字符分布。
 
-### Q238 Qwen上下文容量
+3. 确认可见文本外存在有规律的零宽字符编码序列，对应A。
 
-公开结论：8192。状态：正式复核。
+验证依据或核验要求：编码符号分布支持隐写机制判断；解码校验在Q150继续。
 
-方法：读取Qwen模型条目的contextWindow。
+易错点：截图或手打会丢失不可见字符，不能作为完整解码输入。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.models[0].contextWindow`。
+#### Q150 隐写有效载荷还原
 
-### Q239 自动结算美元阈值
+状态：正式复核。公开结论：C；完整有效载荷不公开。
 
-公开结论：50000。状态：正式复核。
+证据定位：WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15
 
-方法：从监控任务payload及描述核对美元累计阈值。
+方法依据：复现说明。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].payload.message`。
+1. 从同一原始Unicode串按已验证的8种字符映射还原3bit序列。
 
-### Q240 Qwen授权密钥
+2. 按实际位序拼出178字节帧，解析magic、nonce、长度及CRC字段。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 依题给初态(nonce<<16) OR magic运行xorshift32左13右17左5，并保持32位无符号。
 
-方法：从主配置Qwen Provider读取授权字段，仅本地保存。
+4. 按本案最低位先取规则组装密钥流，与密文异或恢复167字节UTF-8载荷。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.apiKey`。
+5. 验证长度和CRC32后再对应选项C。
 
-### Q241 DeepSeek Provider文件密钥
+验证依据或核验要求：CRC32通过、长度167字节和UTF-8可读共同支持还原；没有访问还原地址。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+易错点：不能猜8字符映射或帧字段偏移；本次保留稿缺完整映射，步骤不能当可直接运行的完整脚本。
 
-方法：按题目Provider文件读取agents/main/agent/models.json，不能替换成主配置同名值。
+#### Q151 Threads实际包名
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/agents/main/agent/models.json；providers.vllm_gpu1.apiKey`。
+状态：正式复核。公开结论：B。
 
-边界：此题以Provider文件models.json为准；其值与主配置同名字段不同。公开稿两处原值均省略。
+证据定位：WKH-01.bin/分区1/system_backup/shell/dumpsys/package/com.instagram.barcelona.out
 
-## COM-02：网站、任务与订单
+方法依据：复现说明。
 
-### Q242 移动项目owner
+1. 读取com.instagram.barcelona.out包转储。
 
-公开结论：未定。状态：待复核或未解。
+2. 确认其中系统登记的包身份与Threads相对应。
 
-方法：需读取移动项目配置的owner，公开稿不列账号名。
+3. 用实际注册名匹配选项B。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+验证依据或核验要求：原包身份是证据，不能仅根据应用图标。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+易错点：商店名称与包标识不要求字面相同。
 
-### Q243 HTTPS端口
+#### Q152 联系人底层LID
 
-公开结论：未定。状态：待复核或未解。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：需读取HTTPS配置对应listen项。
+证据定位：WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+方法依据：复现说明。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+1. 在已解密WhatsApp数据定位目标一对一会话。
 
-### Q244 TLS协议版本
+2. 关联联系人映射，分别列出手机号JID和内部LID。
 
-公开结论：未定。状态：待复核或未解。
+3. 用消息发送/接收端点核对底层LID并对应题目。
 
-方法：需读取该HTTPS配置的ssl_protocols。
+验证依据或核验要求：同一会话与联系人映射共同支持目标标识。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+易错点：不要将CL-02的同名字段结构未经核查直接套用Android数据库。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q153 场地变更后的房间
 
-### Q245 密码套件顺序参数
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：未定。状态：待复核或未解。
+证据定位：WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15
 
-方法：需读取ssl_prefer_server_ciphers实际值。
+方法依据：复现说明。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+1. 检索场地安排的连续聊天并按时间排序。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+2. 标出旧地点、提出变更和确认变更的消息。
 
-### Q246 证书SAN中的IP
+3. 取题意要求的最后有效房间，保留上下文。
 
-公开结论：未定。状态：待复核或未解。
+验证依据或核验要求：后续明确变更覆盖旧安排，而非仅按最先命中的房间号。
 
-方法：需从证书/生成脚本核对IP SAN，不推断。
+易错点：引用旧地点的消息可能晚于变更，不等于又改回旧地点。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+#### Q154 现场人数
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+状态：正式复核。公开结论：D。
 
-### Q247 证书SAN中的DNS
+证据定位：WKH-01.bin/分区1/media/0/Android/media/com.whatsapp/WhatsApp/Databases/msgstore.db.crypt15
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：需核对DNS SAN，与CN字段区别。
+1. 定位要求清点现场人数的消息。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+2. 找到紧随其后与该请求对应的回复。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+3. 从回复提取现场人数并对应D。
 
-### Q248 根证书到期时间
+验证依据或核验要求：计数依据是现场清点报告。
 
-公开结论：未定。状态：待复核或未解。
+易错点：聊天参与者、群成员数与实际到场人数不同。
 
-方法：需解析根证书NotAfter并核对时区。
+### WC-01 聊天与APK
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+#### Q155 指定通话时长
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+状态：正式复核。公开结论：36。
 
-### Q249 安装WSL及默认WSL2命令
+证据定位：WC-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata
 
-公开结论：未定。状态：待复核或未解。
+方法依据：复现说明。
 
-方法：需检查ConsoleHost_history.txt中实际输入的完整命令。
+1. 打开WC-01的CallHistory.storedata。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+2. 按题目对象、时间和呼出方向筛选目标通话。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+3. 读取实际duration，核对通话状态后记录36秒。
 
-### Q250 Windows日报任务完整名称
+验证依据或核验要求：时长字段与目标呼出记录一致。
 
-公开结论：未定。状态：待复核或未解。
+易错点：振铃时间、失败拨号尝试或邻近另一次通话不能混入。
 
-方法：需读取Windows计划任务定义中的URI，区别WSL cron同类任务。
+#### Q156 WhatsApp来电号码
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+证据定位：WC-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata
 
-### Q251 PowerShell端口转发目标
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 在WC-01通话记录中限定WhatsApp来源。
 
-方法：需以PowerShell历史为准还原portproxy目标，区别当前注册表或动态脚本地址。
+2. 定位题目所指的来电并读取发起方标识。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+3. 将发起方对应到号码，保留国家区号和题目要求格式。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+验证依据或核验要求：应用来源、来电方向与号码属于同一通话。
 
-### Q252 WSL虚拟磁盘总容量
+易错点：设备机主号码、被叫号码和来电号码角色不同。
 
-公开结论：256（GiB口径）。状态：成员复现待主复核。
+#### Q157 VIP购买页面路由
 
-方法：读取VHDX虚拟容量元数据，区别宿主文件大小和已用空间。
+状态：正式复核。公开结论：ProductShop。
 
-证据定位：`local-artifact/gpt/P01_COM02_WSL/tool-logs/wsl-discovery.json；VHDX metadata VIRTUAL_DISK_SIZE_GUID`。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite；local-artifact/team/members/P01_CL02/exports/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/d/3/[UUID].apk
 
-### Q253 VIP状态修改时间
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 从同案聊天APK提取assets/index.android.bundle并确认Hermes96格式。
 
-方法：需关联设备、管理员端点、目标用户与成功响应。
+2. 解析字符串、函数及指令，定位AppNavigator函数6931注册的ProductShop。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+3. 跟踪UserDashboard函数9414的VIP条件与onPress闭包。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+4. 在函数9427确认navigation.navigate参数为ProductShop，再检查函数9446页面内容。
 
-### Q254 设备成功管理员登录次数
+5. 将该路由与WC聊天中的VIP授权变化关联。
 
-公开结论：未定。状态：待复核或未解。
+验证依据或核验要求：注册路由、VIP入口、实际跳转参数和页面内容形成闭环。
 
-方法：需先定义成功状态口径并计所有匹配登录记录，排除失败/刷新请求。
+易错点：只搜到ProductShop字符串不够；COM-02对应TSX复核未完成，不能声称所有源码版本已核验。
 
-证据定位：`未完成原始检材复验，参考答案仅作线索。`。
+结论边界：WC聊天与同案CL-02导出APK已独立核验；COM-02相应TSX源码交叉检查尚未完成。
 
-边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+#### Q158 指定批次附件类型
 
-### Q255 VIP订单商品及数量
+状态：正式复核。公开结论：D。
 
-公开结论：A（Oil 20、Ice 5）。状态：成员复现待主复核。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-方法：关联有效orders、products和客户记录核对商品及数量。
+方法依据：复现说明。
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/32873；/var/lib/postgresql/18/main/base/16389/90873`。
+1. 在WC-01 ChatStorage.sqlite限定题目所指同一批消息。
 
-### Q256 订单发起设备
+2. 逐条关联媒体项，读取媒体类型及附件元数据。
 
-公开结论：B（Redmi 23124RA7EO）。状态：成员复现待主复核。
+3. 汇总实际出现的类型，按选项D作答。
 
-方法：通过同一订单/actor的活动记录核对品牌与型号。
+验证依据或核验要求：每种类型须能回到本批次具体消息。
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/90873`。
+易错点：只看文件扩展名不能保证知道聊天软件采用的发送类型。
 
-### Q257 订单交易总额
+#### Q159 照片发送附件类型
 
-公开结论：85000。状态：成员复现待主复核。
+状态：正式复核。公开结论：C。
 
-方法：对同一两笔有效订单金额求和，区别客户端显示的换汇金额。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/90873`。
+方法依据：复现说明。
 
-### Q258 当前订单状态
+1. 定位目标照片对应的消息记录。
 
-公开结论：D（pending）。状态：成员复现待主复核。
+2. 关联媒体项并读取消息类型和附件元数据。
 
-方法：读取两笔当前可见订单的status。
+3. 判断它作为图片还是文件等类型发送，再对应C。
 
-证据定位：`/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/90873`。
+验证依据或核验要求：发送类型来自消息/媒体记录，而非照片能否被图片查看器打开。
 
-### Q259 PostgreSQL完整版本
+易错点：同一JPEG可作为照片消息或文档文件发送。
 
-公开结论：D（18.4）。状态：成员复现待主复核。
+#### Q160 订单照片中的商品
 
-方法：以PostgreSQL启动日志和dpkg包版本交叉确定完整小版本。
+状态：正式复核。公开结论：C。
 
-证据定位：`/var/log/postgresql/postgresql-18-main.log.1；/var/lib/dpkg/status`。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-## COM-03-NAS：阵列与系统日志
+方法依据：复现说明。
 
-### Q260 md0阵列UUID
+1. 由订单消息关联到原始订单照片文件。
 
-公开结论：C。状态：正式复核。
+2. 打开完整图像，读取商品名称、数量等可见内容。
 
-方法：核对mdadm配置及成员superblock的阵列身份。
+3. 将照片中的商品内容与题目选项核对，得到C。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/mdadm/mdadm.conf`。
+验证依据或核验要求：商品应由原图直接支持，必要时与相邻订单对话对应。
 
-### Q261 Debian与OMV版本及升级前版本
+易错点：ProductShop是页面路由，不是照片中购买的商品名称。
 
-公开结论：B。状态：正式复核。
+#### Q161 指定文字的消息ID
 
-方法：关联os-release、dpkg status和APT历史，区别当前与升级前版本。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/usr/lib/os-release；COM03_NAS_DISK0.E01/分区2/var/log/apt/history.log；COM03_NAS_DISK0.E01/分区2/var/lib/dpkg/status`。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-### Q262 NAS网络配置
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 在ChatStorage.sqlite按指定原文检索消息。
 
-方法：关联网络配置文件和平台配置。
+2. 核对发送者、会话和时间，排除转述或重复文本。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/netplan/20-openmediavault-enp0s3.yaml；COM03_NAS_DISK0.E01/分区2/etc/openmediavault/config.xml`。
+3. 从匹配记录读取稳定消息ID并完整保留。
 
-### Q263 双配置中的挂载UUID
+验证依据或核验要求：原文命中与消息上下文共同确定唯一记录。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+易错点：数据库自增主键不一定是题目要求的跨设备消息ID。
 
-方法：比较fstab与OpenMediaVault存储配置中的来源UUID。
+#### Q162 实体取货位置
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/fstab；COM03_NAS_DISK0.E01/分区2/etc/openmediavault/config.xml`。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-### Q264 指定日期Web错误日志数
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-公开结论：B。状态：正式复核。
+方法依据：复现说明。
 
-方法：按日期和ERROR等级精确计数，不计普通告警。
+1. 围绕实体取货安排读取连续对话。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/nginx/openmediavault-webgui_error.log.1`。
+2. 区分预约地点、实际确认地点及后续修改。
 
-### Q265 TCoin宣传图片数量
+3. 按题目所指时点记录具体位置与证据消息。
 
-公开结论：9。状态：正式复核。
+验证依据或核验要求：位置由上下文确认，不能只凭某一地名出现。
 
-方法：先可靠重建缺一盘RAID5，再对用户图片枚举、OCR及目视复核。
+易错点：聊天中的地址也可能是公司地址、旧地点或邻近地标。
 
-证据定位：`由两块有效成员重建 md0 派生镜像；EXT4文件枚举、原图目视及OCR交叉复核。`。
+#### Q163 Safari搜索词
 
-### Q266 USERS组人数
+状态：正式复核。公开结论：yahoo finance。
 
-公开结论：C。状态：正式复核。
+证据定位：WC-01.bin/分区1/var/mobile/Library/Safari/History.db
 
-方法：按/etc/group的USERS成员字段计数。
+方法依据：复现说明。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/group`。
+1. 打开WC-01 Safari History.db。
 
-### Q267 SMB白名单未包含账号
+2. 定位目标搜索访问URL，读取其实际检索参数。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 正确URL解码，保留词间空格与大小写，得到yahoo finance。
 
-方法：比较用户集合与Samba允许列表，不把系统账号自动算作允许用户。
+验证依据或核验要求：搜索词应能从对应URL参数还原。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/samba/smb.conf`。
+易错点：页面标题、网站名和搜索词不是同一字段。
 
-### Q268 SSH与普通组交集人数
+#### Q164 Signal包标识
 
-公开结论：5。状态：正式复核。
+状态：正式复核。公开结论：org.whispersystems.signal。
 
-方法：取SSH组与普通组显式成员交集。
+证据定位：WC-01.bin/分区1/var/Manifest.plist
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/group`。
+方法依据：复现说明。
 
-### Q269 Admin组成员
+1. 解析WC-01的var/Manifest.plist。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+2. 在应用登记信息中定位Signal。
 
-方法：读取管理员组成员配置。
+3. 读取Bundle Identifier，记录org.whispersystems.signal。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/group`。
+验证依据或核验要求：应用身份与Bundle Identifier相互对应。
 
-### Q270 SSH白名单配置
+易错点：安装目录名、应用显示名称或商店链接不能替代Bundle ID。
 
-公开结论：A。状态：正式复核。
+#### Q165 图片实际存储路径
 
-方法：核对sshd_config中的AllowUsers/AllowGroups语义及实际配置。
+状态：正式复核。公开结论：B。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/ssh/sshd_config`。
+证据定位：WC-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
 
-### Q271 成功SSH认证次数
+方法依据：复现说明。
 
-公开结论：未定。状态：待复核或未解。
+1. 定位题目图片对应的聊天消息。
 
-方法：按认证事件而非文本行数计数，并保留跨启动/跨日期范围。
+2. 沿媒体项读取真实媒体相对路径，并拼接到正确应用容器。
 
-证据定位：`NAS / var/log/journal；接受认证事件与后续会话链。`。
+3. 确认该路径实际指向原图文件，再对应B。
 
-边界：全范围得到26次成功认证，选项不含26；只取其中一天得到25但题面未限定，故不强选。
+验证依据或核验要求：数据库路径与真实文件内容相互核对。
 
-### Q272 可识别SSH会话数
+易错点：缩略图或缓存路径可能可打开，但不等于原图存储路径。
 
-公开结论：D。状态：正式复核。
+#### Q166 HEIC原始GPS
 
-方法：将Accepted、session opened、断开及关闭关联为会话。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/wtmp.db；COM03_NAS_DISK0.E01/分区2/var/log/wtmp`。
+证据定位：WC-01.bin/分区1/var/mobile/Media/DCIM/100APPLE/IMG_0010.HEIC；WC-01.bin/分区1/var/mobile/Media/PhotoData/Photos.sqlite
 
-### Q273 成功SSH会话源IP
+方法依据：复现说明。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+1. 读取WC-01的IMG_0010.HEIC原文件EXIF GPS。
 
-方法：只统计已确认成功会话的来源，公开稿不列具体地址。
+2. 记录经纬度方向及原始数值，按题意转换展示格式。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/wtmp.db；COM03_NAS_DISK0.E01/分区2/var/log/wtmp`。
+3. 与Photos.sqlite位置记录对照，存在尾数差异时以题目指定原图口径作答。
 
-### Q274 失败登录日志大小
+验证依据或核验要求：原文件元数据是本题的直接证据。
 
-公开结论：A。状态：正式复核。
+易错点：纬度经度顺序、南西负号及提前四舍五入都可能造成错误。
 
-方法：以原日志文件字节长度作答。
+### WW-01 手机与附件
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/btmp`。
+#### Q167 系统版本
 
-### Q275 同一启动组raid disk 0设备名
+状态：正式复核。公开结论：26.6。
 
-公开结论：未定。状态：待复核或未解。
+证据定位：WW-01.bin/分区1/iDevice_info.txt；line 83
 
-方法：按boot_id关联同一组raid disk 0事件；跨启动设备名发生变化。
+方法依据：复现说明。
 
-证据定位：`NAS / var/log/journal；按 boot_id 分组的 md/EXT4启动记录。`。
+1. 打开WW-01的iDevice_info.txt。
 
-边界：12个启动组中前11个raid disk 0为sdb，最后一个为sdd；题面未明确组别，无法唯一确定。
+2. 在第83行附近读取系统版本字段。
 
-### Q276 md0容量变化字节数
+3. 记录26.6并核对文件确实来自WW-01。
 
-公开结论：21455962112。状态：正式复核。
+验证依据或核验要求：设备身份和版本字段一致。
 
-方法：按日志标准512字节扇区数换算，不用磁盘厂商容量。
+易错点：不要使用CL-02的26.5或某应用版本替代。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/journal/[长标识]/system.journal`。
+#### Q168 设备序列号
 
-### Q277 EXT4数据与配额模式
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：A。状态：正式复核。
+证据定位：WW-01.bin/分区1/iDevice_info.txt；line 91
 
-方法：读取对应EXT4挂载日志的数据和配额模式。
+方法依据：复现说明。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/var/log/journal/[长标识]/system.journal`。
+1. 在WW-01 iDevice_info.txt第91行附近定位序列号。
 
-### Q278 最低SMB协议版本
+2. 区分Serial Number与UDID、IMEI等标识。
 
-公开结论：A。状态：正式复核。
+3. 按字符串保留序列号原值和大小写。
 
-方法：读取Samba最低协议配置。
+验证依据或核验要求：明确字段名及同一设备归属。
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/samba/smb.conf`。
+易错点：外形相似的设备标识不能互换。
 
-### Q279 文件系统挂载点
+#### Q169 主要认证邮箱
 
-公开结论：[敏感值不公开]。状态：正式复核。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-方法：从fstab及平台配置核对同一文件系统挂载点。
+证据定位：WW-01.bin/分区1/iDevice_info.txt；line 300
 
-证据定位：`COM03_NAS_DISK0.E01/分区2/etc/fstab`。
+方法依据：复现说明。
 
-## DOC-01：资金流
+1. 读取WW-01 iDevice_info.txt第300行附近账号信息。
 
-### Q280 邮件委托资金总额
+2. 根据认证服务及字段含义确定主要认证邮箱。
 
-公开结论：23010346.36。状态：正式复核。
+3. 完整记录邮箱原文，并与设备其他联系人邮箱区分。
 
-方法：解析邮件指示和OOXML工作表，统一USD汇率后求和，核对重复与错误标签。
+验证依据或核验要求：认证记录而非任意通讯录邮箱支撑答案。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+易错点：多个账号同时出现时，不能把列表第一项默认当主要认证账号。
 
-边界：存在两处工作表标签错误与0.0004 USD的原始口径差异；已显式对齐，不改变两位小数结果。
+#### Q170 服务绑定电话
 
-### Q281 最终资金留存地址数
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：B。状态：正式复核。
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Library/Preferences/group.net.whatsapp.WhatsApp.shared.plist；FullUserName, OwnJabberID, LastOwnJabberID
 
-方法：仅统计成功交易，计算各地址净流入及仍有余额的终点。
+方法依据：复现说明。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+1. 解析group.net.whatsapp.WhatsApp.shared.plist。
 
-### Q282 最终停留资金最多的钱包
+2. 并列查看FullUserName、OwnJabberID、LastOwnJabberID等本机账号相关值。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 核对现有与历史身份是否一致，按题目服务绑定电话口径提取号码。
 
-方法：从无转出终点中比较USD净留存；公开稿省略钱包地址。
+验证依据或核验要求：本机WhatsApp账号身份与号码映射支持结果。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+易错点：LastOwnJabberID可能是历史值，不能无条件覆盖当前账号。
 
-### Q283 黑洞地址用途
+#### Q171 来电所用应用
 
-公开结论：B（销毁/黑洞地址的常见用途）。状态：正式复核。
+状态：正式复核。公开结论：C。
 
-方法：解释Burn/Sink地址的一般用途，不能仅凭地址存在证明某笔销毁。
+证据定位：WW-01.bin/分区1/var/mobile/Library/CallHistoryDB/CallHistory.storedata；ZCALLRECORD Z_PK=5
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+方法依据：复现说明。
 
-### Q284 全链路钱包数量
+1. 打开WW-01 CallHistory.storedata。
 
-公开结论：26。状态：正式复核。
+2. 定位ZCALLRECORD Z_PK=5，核对来电对象和时间。
 
-方法：对完整链路的发送方与接收方取去重并集。
+3. 读取应用来源标识，将其对应到服务选项C。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+验证依据或核验要求：来源标识属于同一目标来电记录。
 
-### Q285 缺少独立工作表的钱包
+易错点：不能因为某号码在WhatsApp联系人里就断定来电使用WhatsApp。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+#### Q172 Signal注册验证码
 
-方法：用链路地址集合减去工作表对应地址集合。
+状态：正式复核。公开结论：[敏感值不公开]。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+证据定位：WW-01.bin/分区1/var/mobile/Library/SMS/sms.db
 
-### Q286 该钱包币种
+方法依据：复现说明。
 
-公开结论：A（Bitcoin）。状态：正式复核。
+1. 只读打开WW-01 sms.db副本。
 
-方法：根据该地址对应交易网络/币种记录确认。
+2. 筛选Signal注册相关短信并核对发送来源、正文和时间。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+3. 读取该次注册验证码，按题意原样保留本地。
 
-### Q287 除Q Coin以外币种数
+验证依据或核验要求：以短信正文明确的服务及注册语境确认验证码归属。
 
-公开结论：3。状态：正式复核。
+易错点：登录码、注册号、短信发送号码可能同时为数字，不能混取。
 
-方法：对实际出现的币种去重，排除Q Coin。
+#### Q173 储物柜图片路径
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+状态：正式复核。公开结论：C。
 
-### Q288 首次跨链资金最多币种
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；original file plus ChatStorage.sqlite ZWAMESSAGE Z_PK=295 / ZWAMEDIAITEM Z_PK=277
 
-公开结论：C。状态：正式复核。
+方法依据：复现说明。
 
-方法：仅比较各币种首次跨链转换对应USD金额，避免后续回流重复计入。
+1. 在ChatStorage.sqlite定位ZWAMESSAGE Z_PK=295。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+2. 沿关联查ZWAMEDIAITEM Z_PK=277，读取媒体路径。
 
-### Q289 成功交易手续费USD
+3. 打开该路径的原图确认储物柜内容，得到题目对应路径。
 
-公开结论：24.84。状态：正式复核。
+验证依据或核验要求：消息、媒体项及图像内容三者一致。
 
-方法：筛选成功交易，按Reference Data_Rate将Gas Fee换算USD后求和。
+易错点：按文件名搜索到别的同名图片或缩略图不能算完成定位。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+#### Q174 图片原始字节数
 
-### Q290 转入转出总额最大钱包
+状态：正式复核。公开结论：[敏感值不公开]。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；entire original file byte count; ZWAMEDIAITEM Z_PK=277 ZFILESIZE
 
-方法：按地址汇总成功转入和转出USD，手续费不入本金。
+方法依据：复现说明。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+1. 沿Q173路径取得同一个原始JPEG文件。
 
-### Q291 累计中转停留最长钱包
+2. 读取完整文件字节长度，包含原文件中实际存在的全部字节。
 
-公开结论：[敏感值不公开]。状态：正式复核。
+3. 与ZWAMEDIAITEM Z_PK=277的ZFILESIZE对照。
 
-方法：对每次可匹配的入出区间累计停留秒数，区别单次最长与累计最长。
+验证依据或核验要求：实际长度与媒体记录相互核验。
 
-证据定位：`DOC-01/PyCHK_to_police.xlsx`。
+易错点：不能用重保存后的图像大小或只算第一JPEG图像流长度。
+
+#### Q175 交接地点
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；second JPEG stream beginning at byte 76934
+
+方法依据：复现说明。
+
+1. 对Q173原JPEG检查是否存在额外图像流。
+
+2. 从字节76934开始读取第二JPEG流并在派生副本中查看。
+
+3. 从图像内容提取交接地点，再与聊天语境交叉核对。
+
+验证依据或核验要求：地点来自第二JPEG流及对应消息，而非第一幅储物柜图的猜测。
+
+易错点：普通图片查看器可能只显示第一幅图，不能据此认定文件只有一张图像。
+
+#### Q176 收款钱包
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/b/3/[UUID].jpg；second JPEG stream beginning at byte 76934
+
+方法依据：复现说明。
+
+1. 读取同一文件字节76934开始的第二JPEG流。
+
+2. 在完整图像中辨认收款钱包信息，并与相关文字上下文核对。
+
+3. 按题目选项或完整地址格式作答，保留原始字符。
+
+验证依据或核验要求：图像中的钱包信息与交易语境共同支持归属。
+
+易错点：不能把发款方、收款方或交易哈希互相替代；OCR结果需目视核对。
+
+#### Q177 发送图片主文件名
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+
+方法依据：复现说明。
+
+1. 定位题目指定发送图片的聊天记录。
+
+2. 读取该附件的原始文件名，而不是导出时生成的随机名称。
+
+3. 按题意去掉最后的扩展名，保留主文件名中的其他点号和连字符。
+
+验证依据或核验要求：文件名必须属于目标发送消息的媒体项。
+
+易错点：去扩展名不等于把文件名从第一个点开始全部截断。
+
+#### Q178 转账交易哈希
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/3/f/[UUID].jpg；ASCII appended after JPEG EOI
+
+方法依据：复现说明。
+
+1. 由对应聊天附件取得指定原JPEG。
+
+2. 检查JPEG EOI之后的剩余字节，提取追加ASCII文本。
+
+3. 按交易语境识别其中转账交易哈希并保留完整字符。
+
+验证依据或核验要求：值来自图像尾部追加内容，能够回到原文件具体位置。
+
+易错点：对JPEG整体计算文件哈希，得不到题目要求的交易哈希。
+
+#### Q179 群组创建时间
+
+状态：正式复核。公开结论：2026-07-30 17:11:36。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+
+方法依据：复现说明。
+
+1. 在目标群组聊天中定位创建系统事件。
+
+2. 读取事件时间，核对时间纪元和单位。
+
+3. 转换UTC+8后记录2026-07-30 17:11:36。
+
+验证依据或核验要求：使用创建事件而不是现存最早普通消息。
+
+易错点：数据库创建时间或加入群组时间不一定是群组创建时间。
+
+#### Q180 群组原始名称
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+
+方法依据：复现说明。
+
+1. 先定位群组创建事件及其当时标题。
+
+2. 再检查后续改名系统事件，建立名称随时间变化的顺序。
+
+3. 按题目“原始名称”使用创建时名称。
+
+验证依据或核验要求：原名由创建及改名事件链支持。
+
+易错点：当前会话标题可能已被后续改名覆盖。
+
+#### Q181 指定房间
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+
+方法依据：复现说明。
+
+1. 在WW-01目标会话中定位题目指定消息。
+
+2. 读取前后上下文，确认房间号用于题目所述活动。
+
+3. 保留该阶段有效房间，不混用其他检材的场地变更结论。
+
+验证依据或核验要求：题目消息、活动和房间三者对应。
+
+易错点：同一案件出现多个房间，不能仅按数字出现次数决定答案。
+
+#### Q182 二维码用途
+
+状态：正式复核。公开结论：D。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/Message/Media/[标识已脱敏]/9/3/[UUID].jpg；QR decoded offline via OpenCV QRCodeDetector.detectAndDecode
+
+方法依据：复现说明。
+
+1. 沿聊天媒体关系取得指定二维码原图。
+
+2. 使用离线二维码解码结果识别内容，本场采用OpenCV QRCodeDetector.detectAndDecode。
+
+3. 结合索取与发送前后消息判断业务用途，选择D。
+
+验证依据或核验要求：二维码内容与聊天语境共同支持用途；无需访问解码出的地址。
+
+易错点：解码成功仅说明能读取内容，不证明其中网站安全或请求已执行。
+
+#### Q183 申请VIP的注册账号
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：WW-01.bin/分区1/var/mobile/Applications/group.net.whatsapp.WhatsApp.shared/ChatStorage.sqlite
+
+方法依据：复现说明。
+
+1. 在ChatStorage.sqlite定位申请VIP的原始消息。
+
+2. 读取申请中明确给出的注册账号，核对申请人和上下文。
+
+3. 保留账号大小写及数字，不用聊天昵称替代。
+
+验证依据或核验要求：注册账号直接来自申请文本。
+
+易错点：显示名、电话号码和业务注册账号可能完全不同。
+
+### COM-02 服务器与数据库
+
+#### Q184 Graph token文件大小
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：先在宿主共享项目定位Graph token候选文件，记录其宿主路径及项目归属。
+
+2. 对比虚拟机内同名副本，按题目指定来源选择目标，不混用不同修改时间的副本。
+
+3. 读取目标文件的逻辑字节长度，并连同文件名、路径记录。
+
+验证依据或核验要求：需要同一目标文件的目录记录和导出后字节长度相符；原始证据闭环未完成。
+
+易错点：不能用磁盘占用空间、编辑器字符数或另一个同名文件大小代替。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q185 Graph token文件名与SHA256
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：复用Q184确定的同一Graph token文件，先确认文件名与来源层级。
+
+2. 在只读导出副本上按题目要求计算SHA256，保留文件路径、字节长度和计算结果。
+
+3. 将原始目录中的文件名与所计算文件对应，避免将其他副本的哈希拼在一起。
+
+验证依据或核验要求：需能证明文件名、大小、SHA256来自同一份文件；当前不能将参考哈希当复验值。
+
+易错点：只知道参考答案中的长字符串不等于完成哈希验证。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q186 Qwen工具调用解析器
+
+状态：正式复核。公开结论：hermes。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/start_qwen_8000.sh；vLLM launch arguments --tool-call-parser
+
+方法依据：既有记录复述。
+
+1. 从WSL导出/home/[用户]/start_qwen_8000.sh，以文本方式读取。
+
+2. 定位vLLM启动参数中的--tool-call-parser，检查参数是否续行以及是否处于实际启动命令。
+
+3. 读取该参数值hermes，并与其他模型启动脚本区分。
+
+验证依据或核验要求：原脚本参数支持hermes；没有执行启动脚本。
+
+易错点：不要把模型家族名或Hermes字节码格式当本题工具调用解析器的来源。
+
+#### Q187 移动访问令牌有效小时
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位当前移动服务配置中访问令牌有效期的定义。
+
+2. 追踪配置是默认常量还是被环境变量覆盖，并确认运行项目版本。
+
+3. 根据字段单位将有效期换算为小时，保留原值和换算过程。
+
+验证依据或核验要求：需验证实际配置来源及单位；目前没有完成当前服务证据闭环。
+
+易错点：访问令牌有效期与刷新令牌、会话失效时间不是同一配置。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q188 默认Session Secret
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位服务会话配置中的Session Secret定义。
+
+2. 检查题目所问的是默认值还是运行时值，分别记录代码回退值与环境覆盖关系。
+
+3. 仅在本地保留对应秘密值及字段定位，公开稿保留方法。
+
+验证依据或核验要求：需证明所读值确实属于目标服务会话配置；当前未完成复核。
+
+易错点：不能用任意API key、数据库口令或其他服务的Secret替代。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q189 二维码请求客户端版本
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：将题给本地时间换算到请求日志所用时区，明确筛选窗口。
+
+2. 在该窗口筛选二维码端点及目标设备的请求元数据。
+
+3. 从同一请求记录读取客户端版本，保留状态码与请求标识用于关联。
+
+验证依据或核验要求：时间、端点、设备和版本须属于同一事件；当前未完成原始日志复验。
+
+易错点：旧APK静态版本不一定等于该次请求的客户端版本。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q190 二维码请求端点
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在访问日志按题目时段及二维码操作筛选请求。
+
+2. 读取记录中的方法和完整URI，分清路径与查询参数。
+
+3. 以对应后端路由作交叉核对，记录实际被访问的路径。
+
+验证依据或核验要求：实际请求日志应支持端点；APK字符串只能提示候选。
+
+易错点：可能存在相似的生成、获取、刷新二维码路径，不能只匹配qr关键字。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q191 管理员二维码页面源码
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在目标前端项目定位管理员二维码功能的页面文件。
+
+2. 沿路由配置的导入与组件引用找到实际被挂载页面。
+
+3. 查看页面是否包含题目所指二维码操作及对应请求调用，记录源文件相对路径。
+
+验证依据或核验要求：文件、路由和功能调用需形成完整关系；当前源码复核未完成。
+
+易错点：相似组件名、翻译文字或未被引用的旧页面不能直接作答。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q192 币价刷新秒数
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位币价获取/刷新逻辑及其配置项。
+
+2. 查定时器或调度参数，判断原值单位是毫秒、秒还是其他单位。
+
+3. 按题目要求换算为秒，并核对是否存在不同页面或服务的刷新频率。
+
+验证依据或核验要求：需要代码使用处证明参数单位及目标功能；当前未完成。
+
+易错点：不能把Token有效期、请求超时或缓存TTL当币价刷新间隔。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q193 DHCP精确MAC对应主机
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：COM-02宿主 ProgramData/VMware 的DHCP租约及备份；Tronic_s2轮转vmware日志。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：读取COM-02宿主ProgramData/VMware的DHCP租约及备份。
+
+2. 将题目MAC按六个字节精确比较，关联匹配记录的主机字段。
+
+3. 再对照Tronic_s2轮转vmware日志中的网卡记录，保留fc与6c的一字节差异。
+
+验证依据或核验要求：已见实际记录与题面并非精确一致，仍为未解冲突。
+
+易错点：近似MAC和相近主机名不是精确映射的证明。
+
+结论边界：题面MAC一字节为fc，实际租约及另一VM日志为6c；相近标识仅是候选，不能声称精确命中。
+
+#### Q194 结算关联表外键目标
+
+状态：成员复现待主复核。公开结论：A（transactions）。
+
+证据定位：Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 在共享项目setup.sql中定位结算关系及transaction_id列。
+
+2. 读取该列的FOREIGN KEY或REFERENCES定义，记录目标表及目标列。
+
+3. 将目标表名称与选项核对，成员结果为transactions。
+
+验证依据或核验要求：setup.sql外键定义支持选项A；属于成员复现待主复核。
+
+易错点：不能仅因字段名叫transaction_id就猜目标表。
+
+#### Q195 数据库IP与端口
+
+状态：成员复现待主复核。公开结论：[敏感值不公开]。
+
+证据定位：Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/config.py
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取共享项目app/config.py中的数据库连接配置。
+
+2. 把主机、端口、用户名和库名拆开记录，确认默认值所用的环境变量或回退路径。
+
+3. 继续核对当前VM运行环境是否覆盖默认值；这一覆盖关系当时未完成。
+
+验证依据或核验要求：目前只支持共享项目默认连接配置，不能声称已确认当前运行地址。
+
+易错点：默认配置与部署环境实际连接目标可能不同。
+
+结论边界：共享项目默认配置已复现，当前VM运行配置覆盖关系尚待核对。
+
+#### Q196 营业时段已完成结算批次
+
+状态：成员复现待主复核。公开结论：4。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/49490
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 通过PostgreSQL catalog及pg_filenode.map确定业务库与结算表的物理文件；本案业务库OID16389、实际文件49490。
+
+2. 解析页与tuple，结合事务状态和标志筛掉不可见或历史版本。
+
+3. 根据应用写入时间语义，把香港09:00—17:00对应到UTC01:00—09:00，再筛completed。
+
+4. 对满足全部条件的当前有效记录计数，成员结果4条。
+
+验证依据或核验要求：成员记录中37条有效结算记录经同一筛选得到4条；需主复核确认。
+
+易错点：表OID49278不等于实际relfilenode49490；xmax非零也不必然删除。
+
+#### Q197 金额字段加密格式
+
+状态：成员复现待主复核。公开结论：fernet。
+
+证据定位：Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/tronic_amount_crypto.py；Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql；/var/lib/postgresql/18/main/base/16389/49490
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取tronic_amount_crypto.py中的加解密实现，核对数据库字段设计。
+
+2. 确定v1前缀与实际令牌的分离方式，再按源码调用格式识别Fernet。
+
+3. 对匹配记录执行认证解密，保留认证成功与明文类型检查结果。
+
+验证依据或核验要求：源码与令牌认证解密共同支持Fernet，当前为成员复现。
+
+易错点：仅看Base64外观或前缀不能证明具体加密格式。
+
+#### Q198 已完成结算金额合计
+
+状态：成员复现待主复核。公开结论：14194443.00。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/49490
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 使用Q196同一组4条有效结算记录，固定记录标识与筛选条件。
+
+2. 按Q197确认的格式逐条认证解密金额，并按Decimal读取。
+
+3. 将1000000、580000、12134443、480000求和，得到14194443.00。
+
+4. 核对输出币种和小数位是否符合题目。
+
+验证依据或核验要求：四笔金额与筛选集合一一对应；成员结果待主复核。
+
+易错点：不要更换记录集合、混入未完成批次或用浮点累加引入精度差。
+
+#### Q199 三类邮件状态字段
+
+状态：成员复现待主复核。公开结论：A（email_status、bank_email_status、otc_email_status）。
+
+证据定位：Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/setup.sql；Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/models.py
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 在setup.sql中定位结算邮件相关状态列。
+
+2. 对照app/models.py同一模型，分别记录普通、银行及OTC邮件状态字段。
+
+3. 按原字段名保留email_status、bank_email_status、otc_email_status并匹配选项。
+
+验证依据或核验要求：DDL与模型定义相互支持成员选项A。
+
+易错点：状态字段不等于收件地址、发送时间或布尔成功显示文字。
+
+#### Q200 数据库口令候选核验
+
+状态：成员复现待主复核。公开结论：[敏感值不公开]。
+
+证据定位：/var/lib/postgresql/18/main/global/1260
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 从目标PG数据目录的角色记录取得对应SCRAM验证器，确认角色关联。
+
+2. 只对题目给定候选按验证器参数进行离线派生。
+
+3. 分别比较派生的StoredKey与ServerKey，记录匹配候选及验证方式。
+
+验证依据或核验要求：成员执行的是离线候选校验，没有网络登录；待主复核。
+
+易错点：不能把SCRAM验证器当明文密码，也不能说成功登录了数据库。
+
+#### Q201 数据库连接用户
+
+状态：成员复现待主复核。公开结论：[敏感值不公开]。
+
+证据定位：Com-02.e01/分区6/Users/[用户]/Documents/Virtual Machines/Tronic/share/tronic-investment/app/config.py
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取共享项目app/config.py中的数据库用户名定义。
+
+2. 区分代码默认值与环境变量读取路径。
+
+3. 继续核对当前VM部署配置是否覆盖；未完成时明确只代表默认配置。
+
+验证依据或核验要求：共享项目默认用户名有成员复现，运行覆盖关系仍待核对。
+
+易错点：Linux登录用户名、PostgreSQL角色名与应用登录账号可能不同。
+
+结论边界：共享项目默认配置已复现，当前VM运行配置覆盖关系尚待核对。
+
+#### Q202 Tronic操作系统与内存
+
+状态：成员复现待主复核。公开结论：B（Ubuntu 64-bit、4096MiB）。
+
+证据定位：local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/Tronic.vmx；guestOS; memsize
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取Tronic/Tronic.vmx，确认该文件对应题目目标VM。
+
+2. 查guestOS和memsize原始配置。
+
+3. 将操作系统标识与内存单位解释为Ubuntu 64-bit、4096MiB并匹配选项。
+
+验证依据或核验要求：VMX配置支持成员选项B，未提升为主复核结论。
+
+易错点：配置内存不是宿主总内存，也不是当时已用内存。
+
+#### Q203 第一块网卡硬件型号
+
+状态：成员复现待主复核。公开结论：e1000。
+
+证据定位：local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/Tronic.vmx；ethernet0.virtualDev
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 在同一Tronic.vmx中定位ethernet0配置组。
+
+2. 读取ethernet0.virtualDev，保留原值e1000。
+
+3. 检查没有误读ethernet1或宿主物理网卡信息。
+
+验证依据或核验要求：第一块虚拟网卡的配置项支持e1000，属于成员复现。
+
+易错点：网卡MAC、连接模式和虚拟硬件型号是三个不同字段。
+
+#### Q204 独立数据库虚拟机名
+
+状态：成员复现待主复核。公开结论：Tronic_s2。
+
+证据定位：local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic_s2/Tronic_s2.vmx；displayName
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取Tronic_s2目录的VMX配置及displayName。
+
+2. 将目录路径、配置文件和虚拟磁盘所属关系对应起来。
+
+3. 结合数据库角色证据确认该VM是题目所指独立数据库VM，成员结果Tronic_s2。
+
+验证依据或核验要求：名称与角色需共同对应；当前仍为成员复现待主复核。
+
+易错点：目录名相似不代表已证明服务角色，不能只按s2后缀猜测。
+
+#### Q205 下午首次异常关机后启动
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：COM-02宿主 Tronic虚拟机目录全部vmware*.log、mksSandbox日志及VMware宿主日志。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：汇集目标Tronic目录的轮转vmware日志、mksSandbox及宿主相关日志。
+
+2. 按事件原始时区排序，区分启动时读入DICT cleanShutdown与运行中Setting FALSE。
+
+3. 对本地下午的启动逐条检查上一关机状态，再与上午异常启动分开。
+
+验证依据或核验要求：已检异常启动在上午；下午读入TRUE，题面与证据冲突未解。
+
+易错点：运行中把cleanShutdown设FALSE是状态变化，不能直接等同上一次崩溃。
+
+结论边界：已检日志中的两次异常关机启动均在本地上午；下午启动读入cleanShutdown=TRUE。运行中的Setting FALSE不表示上次异常退出，题证冲突未解。
+
+#### Q206 工作区加载另一虚拟机的时间
+
+状态：成员复现待主复核。公开结论：B（04:07:48 UTC）。
+
+证据定位：local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/vmware.log；line 270
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 在Tronic/vmware.log定位含另一VMX路径的Workspace Session记录。
+
+2. 保留该行上下文，确认事件是工作区加载对应VM而非其业务启动。
+
+3. 读取记录时间04:07:48 UTC，并按题目时间口径匹配选项。
+
+验证依据或核验要求：成员定位为vmware.log第270行；结论待主复核。
+
+易错点：工作区加载时间不必等于客体操作系统启动或用户登录时间。
+
+#### Q207 首次虚拟磁盘锁定错误
+
+状态：成员复现待主复核。公开结论：A（2026-08-03 11:52:03 UTC+8）。
+
+证据定位：local-artifact/gpt/P01_COM02_HOST/exports/Users/[用户]/Documents/Virtual Machines/Tronic/vmware-2.log；line 673
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 扫描目标Tronic的全部轮转vmware日志中的虚拟磁盘锁定错误。
+
+2. 按原始时间排序，不按文件名编号顺序推定先后。
+
+3. 定位最早匹配事件并转换题目要求时区，成员结果2026-08-03 11:52:03 UTC+8。
+
+验证依据或核验要求：成员定位vmware-2.log第673行，并以全轮转范围比较；待主复核。
+
+易错点：仅在当前vmware.log搜到第一条不一定是整个保留范围的第一次。
+
+#### Q208 指定价格请求源IP
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：把题目指定分钟换算到日志时区。
+
+2. 分别检查/api/price与/api/prices实际记录，明确单复数路径差异。
+
+3. 在满足题目请求条件的记录上读取来源字段，并核对代理转发语义。
+
+验证依据或核验要求：需保留实际请求行和来源字段定义；尚未闭环。
+
+易错点：不能把相似端点、相邻请求或upstream地址当客户端来源。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q209 代理转发后端节点
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：先固定题目所指请求的时间、方法、URI及请求标识。
+
+2. 在代理日志查同一请求的转发/upstream记录。
+
+3. 读取实际选择的后端节点，结合配置解释其角色。
+
+验证依据或核验要求：同一请求的代理关联记录才支持节点结论；当前未完成。
+
+易错点：配置中列出的所有后端不等于该次请求实际命中的后端。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q210 生成二维码请求ID
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：联合筛选来源、时段、成功响应和生成二维码端点。
+
+2. 定位唯一目标请求后读取request ID原值。
+
+3. 检查是否因重试产生多条相近请求，保留与题目吻合的一条及理由。
+
+验证依据或核验要求：需要完整筛选条件和目标行；当前仍未定。
+
+易错点：不能从另一条二维码获取请求借用ID。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q211 Nginx实际访问日志名
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：读取目标服务实际启用的Nginx配置及其包含关系。
+
+2. 定位生效server/location中的access_log设置。
+
+3. 将日志文件名与磁盘实际日志对应，区分HTTP配置与HTTPS模板。
+
+验证依据或核验要求：需要有效配置链及日志存在证据；当时未完成。
+
+易错点：项目内模板文件不自动证明其已被Nginx加载。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q212 指定价格请求源IP选项
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：明确指定时段及价格请求路径，并将时间统一。
+
+2. 筛选满足成功条件的请求，按时间排序。
+
+3. 从第一个符合条件的记录读取来源IP，再与选项逐项比较。
+
+验证依据或核验要求：第一个成功请求的完整记录是验证对象；当前未完成。
+
+易错点：不能用第一条任意请求或相邻行的来源替代。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q213 API代理监听端口
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位API代理的启动命令或服务配置。
+
+2. 读取实际绑定地址和端口，区分前端HTTPS、代理及后端端口。
+
+3. 结合启动/运行日志核对生效监听值。
+
+验证依据或核验要求：配置与运行记录应共同支持端口；当前未复现。
+
+易错点：请求URL上的端口可能属于上游入口，不是该API代理自身监听端口。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q214 二维码请求IP与ID组合
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：按题目条件筛选成功的二维码POST请求。
+
+2. 在同一条记录读取来源IP及request ID，保留时间、URI、状态。
+
+3. 检查相关日志字段是否经过代理重写或使用转发头。
+
+验证依据或核验要求：IP和ID必须出自同一事件；目前未完成。
+
+易错点：分别在两条日志找到正确格式的值，拼在一起并不构成答案。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q215 登录设备UA与系统版本
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：按题给日期、时段与设备型号筛选登录事件。
+
+2. 核对事件是登录成功而非失败、刷新令牌或普通访问。
+
+3. 从同一事件读取UA和系统版本，保留原始大小写和版本段。
+
+验证依据或核验要求：设备、成功状态与元数据需对应同一记录；当前未完成。
+
+易错点：网页UA与应用上报设备元数据可能不同，应按题目指定字段。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q216 登录设备唯一标识
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：复用Q215已确定的同一次登录事件。
+
+2. 读取该记录的Device ID并核对关联设备信息。
+
+3. 检查是否存在会话ID、广告ID等其他标识，明确字段名称后作答。
+
+验证依据或核验要求：需目标登录记录支持Device ID；目前无完整复验。
+
+易错点：不能把用户ID、请求ID或设备型号当设备唯一标识。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q217 客户端版本与构建号
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位题目对应请求的设备/客户端元数据。
+
+2. 分别读取app_version与app_build，保持版本字符串及构建号格式。
+
+3. 与同一登录或操作记录关联，排除其他安装版本。
+
+验证依据或核验要求：同一请求提供版本和构建号才支持组合答案；未完成。
+
+易错点：不能用聊天中较早APK的Manifest版本替代后来请求上报的版本。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q218 日报主要收件人
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位结算日报所用服务的邮件环境配置。
+
+2. 追踪日报发送逻辑使用哪个收件变量，而非只搜索任意邮箱。
+
+3. 读取主要收件人字段，并与抄送、银行和OTC地址区分。
+
+验证依据或核验要求：需发送类别与配置变量对应；当前未完成。
+
+易错点：参考邮件收件人或其他通知地址不自动等于系统日报默认收件人。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q219 Graph客户端标识
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：先确认目标是题目所指项目的Graph Token JSON。
+
+2. 读取客户端标识字段，保持完整字符串。
+
+3. 与项目认证配置核对同一应用，避免取成tenant或用户标识。
+
+验证依据或核验要求：目标文件和字段尚待原始检材复核。
+
+易错点：客户端ID、租户ID、授权令牌是不同内容。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q220 token_type与tenant
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在同一Graph Token记录中分别定位token_type和tenant相关字段。
+
+2. 确认字段名、数据类型和原始值，不从其他文件拼接。
+
+3. 与该项目认证上下文核对并按题意组织答案。
+
+验证依据或核验要求：类型与租户字段需来自同一目标记录；尚未完成。
+
+易错点：token_type不是访问范围scope，tenant也不是登录邮箱域名的直接推断。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q221 Token有效秒数
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：读取题目指定Token记录中的有效期字段。
+
+2. 确认原值是持续时间还是到期时间点，以及其单位。
+
+3. 必要时根据同记录的起止时间计算秒数，并保留计算依据。
+
+验证依据或核验要求：需字段语义与秒数对应；当前未完成。
+
+易错点：不能把Unix时间戳直接当有效秒数，也不能混用刷新令牌有效期。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q222 日报与银行邮件路由
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：读取邮件服务的实际环境变量及邮件发送分支。
+
+2. 逐项映射日报、银行和其他类别分别使用的收件配置。
+
+3. 保留每个类别对应的地址及来源行，检查运行覆盖关系。
+
+验证依据或核验要求：需要路由分支与生效变量相互支持；当前未完成。
+
+易错点：不要按邮箱名称猜角色，也不能把测试配置当部署配置。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q223 OTC邮件地址
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在同一邮件环境配置中定位OTC收件变量。
+
+2. 检查OTC发送分支引用该变量的关系。
+
+3. 按原值保留邮箱字符与大小写，本地作答并公开脱敏。
+
+验证依据或核验要求：配置与OTC分支尚未闭环，参考值不作确定答案。
+
+易错点：普通日报地址或银行地址不能代替OTC收件地址。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q224 OpenClaw工作目录与Provider
+
+状态：正式复核。公开结论：C（WSL用户工作目录、Provider vllm）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；agents.defaults.workspace; agents.defaults.model.primary
+
+方法依据：既有记录复述。
+
+1. 只读进入WSL文件系统并打开.openclaw/openclaw.json。
+
+2. 读取agents.defaults.workspace，记录工作目录。
+
+3. 读取agents.defaults.model.primary，从默认模型标识的Provider前缀确认vllm。
+
+验证依据或核验要求：工作目录与默认模型同源，结果对应选项C。
+
+易错点：Provider ID不是api字段的协议名称。
+
+#### Q225 数据库MCP命令
+
+状态：正式复核。公开结论：/home/[用户]/.openclaw/bin/postgres-isolated-mcp。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；mcp.servers.postgres-isolated.command
+
+方法依据：既有记录复述。
+
+1. 在主配置openclaw.json定位mcp.servers。
+
+2. 找到postgres-isolated服务，读取command完整绝对路径。
+
+3. 保留路径中的用户目录和文件名于本地，公开稿仅匿名化用户部分。
+
+验证依据或核验要求：字段mcp.servers.postgres-isolated.command直接支持命令路径。
+
+易错点：配置声明调用该命令，不等于证明其已启动或连接成功。
+
+#### Q226 DeepSeek Provider ID
+
+状态：正式复核。公开结论：vllm_gpu1。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm_gpu1
+
+方法依据：既有记录复述。
+
+1. 在openclaw.json的models.providers中遍历模型条目。
+
+2. 找到DeepSeek模型所在的对象。
+
+3. 读取包住该模型的Provider键名vllm_gpu1。
+
+验证依据或核验要求：模型ID与所属Provider层级共同支持vllm_gpu1。
+
+易错点：显示名称、模型ID和Provider ID不能混为一谈。
+
+#### Q227 Qwen参数规模
+
+状态：正式复核。公开结论：D（32B）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.models[0].id
+
+方法依据：既有记录复述。
+
+1. 定位models.providers.vllm.models中的Qwen条目。
+
+2. 完整读取模型ID，确认其32B规模标识。
+
+3. 与默认模型引用对应并选择32B。
+
+验证依据或核验要求：主配置模型ID支持参数规模32B。
+
+易错点：AWQ等量化标记不是参数数量，contextWindow也不是参数规模。
+
+#### Q228 DeepSeek参数规模
+
+状态：正式复核。公开结论：C（14B）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm_gpu1.models[0].id
+
+方法依据：既有记录复述。
+
+1. 定位models.providers.vllm_gpu1.models中的DeepSeek条目。
+
+2. 完整读取该模型ID中的14B规模。
+
+3. 核对该条目确属DeepSeek而非旁边Qwen模型。
+
+验证依据或核验要求：模型条目支持14B，选项C。
+
+易错点：不能套用通用DeepSeek旗舰模型规模，题目问的是此处配置模型。
+
+#### Q229 17时结算任务名
+
+状态：正式复核。公开结论：tronic-settlement-monitor-1700-close。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].name
+
+方法依据：既有记录复述。
+
+1. 打开cron/jobs.json，先按schedule及payload找17:00收市结算任务。
+
+2. 核对它与日报任务、营业时段监控任务的区别。
+
+3. 读取同一任务对象的name，保留tronic-settlement-monitor-1700-close。
+
+验证依据或核验要求：任务用途、时刻与名称在同一对象中对应。
+
+易错点：仅按名称含settlement搜索可能命中多个不同周期任务。
+
+#### Q230 17时任务ID与cron
+
+状态：正式复核。公开结论：A（目标任务ID、0 17 * * *；ID不公开）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].id/schedule
+
+方法依据：既有记录复述。
+
+1. 复用Q229确定的17:00收市任务对象。
+
+2. 同时读取id与schedule的cron表达式。
+
+3. 核对时区，解释0 17 * * *是该配置时区每日17:00。
+
+验证依据或核验要求：ID、cron及时区来自同一任务；原ID仅本地保留。
+
+易错点：不能把相邻任务ID与这个cron组合；cron本身不包含所有时区信息。
+
+#### Q231 营业时间监控频率
+
+状态：正式复核。公开结论：E（30分钟）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].schedule.expr
+
+方法依据：既有记录复述。
+
+1. 从jobs.json定位营业时间结算监控任务。
+
+2. 读取schedule.expr的分钟列及生效时间范围。
+
+3. 解析为每30分钟，另将每1分钟审批任务列出以排除混淆。
+
+验证依据或核验要求：配置表达式支持营业监控30分钟频率。
+
+易错点：1分钟审批与30分钟监控是不同任务，不能按最短间隔回答。
+
+#### Q232 可检索记忆chunks数量
+
+状态：正式复核。公开结论：C（0条）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/memory/main.sqlite；chunks
+
+方法依据：既有记录复述。
+
+1. 只读打开.openclaw/memory/main.sqlite并检查存在chunks表。
+
+2. 执行PRAGMA quick_check，记录结构检查结果。
+
+3. 执行SELECT COUNT(*) FROM chunks，结果0。
+
+验证依据或核验要求：结构检查通过且该表计数为0，支持选项C。
+
+易错点：0条chunks只描述该表当前状态，不证明整个设备从未产生记忆。
+
+#### Q233 Gateway监听端口
+
+状态：正式复核。公开结论：18789。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；gateway.port
+
+方法依据：既有记录复述。
+
+1. 打开WSL中的OpenClaw主配置。
+
+2. 定位gateway对象，读取port字段18789。
+
+3. 与模型Provider的8000/8001端口区分。
+
+验证依据或核验要求：gateway.port直接支持18789。
+
+易错点：配置端口不自动证明运行时对外可达。
+
+#### Q234 Qwen服务地址
+
+状态：正式复核。公开结论：http://127.0.0.1:8000/v1。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.baseUrl
+
+方法依据：既有记录复述。
+
+1. 在models.providers定位Qwen所属vllm对象。
+
+2. 读取baseUrl完整值http://127.0.0.1:8000/v1。
+
+3. 保留协议、地址、端口和路径，不省略/v1。
+
+验证依据或核验要求：Qwen模型与同一Provider的baseUrl对应。
+
+易错点：不要取DeepSeek的端口或OpenClaw Gateway端口。
+
+#### Q235 定时任务错误原因
+
+状态：正式复核。公开结论：C（timeout）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs-state.json；jobs.*.state.lastErrorReason
+
+方法依据：既有记录复述。
+
+1. 打开cron/jobs-state.json而非只读jobs.json。
+
+2. 定位对应任务的state及lastErrorReason。
+
+3. 读取timeout，并保留任务标识与状态关联。
+
+验证依据或核验要求：执行状态字段直接记录timeout。
+
+易错点：错误原因反映该状态记录，不能据此推断所有历史执行都超时。
+
+#### Q236 WSL发行版版本与UID
+
+状态：正式复核。公开结论：C（Ubuntu、WSL2、UID 1000）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/host/partition-3/Users/[用户]/NTUSER.DAT；Software/Microsoft/Windows/CurrentVersion/Lxss/{[UUID]}
+
+方法依据：既有记录复述。
+
+1. 在宿主用户NTUSER.DAT读取Software/Microsoft/Windows/CurrentVersion/Lxss。
+
+2. 逐个发行版子键核对DistributionName、Version和DefaultUid。
+
+3. 将同一发行版的Ubuntu、2、1000组成答案。
+
+验证依据或核验要求：注册表同一子键支持发行版、WSL版本和UID。
+
+易错点：Version=2指WSL代际，不是Ubuntu发行版号；UID也不是Windows SID。
+
+#### Q237 Gateway绑定位置
+
+状态：正式复核。公开结论：loopback。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；gateway.bind
+
+方法依据：既有记录复述。
+
+1. 在openclaw.json定位gateway。
+
+2. 读取bind字符串原值loopback。
+
+3. 结合port字段说明这是网关绑定配置，不改写成推测的公网IP。
+
+验证依据或核验要求：gateway.bind支持loopback。
+
+易错点：不能因宿主存在端口转发就把此字段改答为0.0.0.0。
+
+#### Q238 Qwen上下文容量
+
+状态：正式复核。公开结论：8192。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.models[0].contextWindow
+
+方法依据：既有记录复述。
+
+1. 定位Qwen对应模型条目，确认不是DeepSeek条目。
+
+2. 读取contextWindow=8192。
+
+3. 与maxTokens及模型参数规模分别记录。
+
+验证依据或核验要求：Qwen模型对象的contextWindow直接支持8192。
+
+易错点：最大输出token、上下文窗口和模型参数量不同。
+
+#### Q239 自动结算美元阈值
+
+状态：正式复核。公开结论：50000。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/cron/jobs.json；jobs[id=[UUID]].payload.message
+
+方法依据：既有记录复述。
+
+1. 在jobs.json找到日常交易监控及自动结算任务。
+
+2. 阅读payload.message及描述中的触发条件。
+
+3. 确认金额为累计美元阈值50000，再按题目格式只填数字。
+
+验证依据或核验要求：任务payload及描述支持同一美元累计阈值。
+
+易错点：单笔门槛、累计阈值与余额要求不能混用，币种也必须核对。
+
+#### Q240 Qwen授权密钥
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/openclaw.json；models.providers.vllm.apiKey
+
+方法依据：既有记录复述。
+
+1. 在openclaw.json定位models.providers.vllm。
+
+2. 确认该Provider承载Qwen模型后读取apiKey完整值。
+
+3. 本地保留原值并记录字段路径，公开稿省略秘密值。
+
+验证依据或核验要求：主配置Qwen条目与授权字段同源。
+
+易错点：不应取agents/main/agent/models.json中的同名配置替代。
+
+#### Q241 DeepSeek Provider文件密钥
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/exports/wsl/home/[用户]/.openclaw/agents/main/agent/models.json；providers.vllm_gpu1.apiKey
+
+方法依据：既有记录复述。
+
+1. 按题目Provider文件口径打开agents/main/agent/models.json。
+
+2. 定位providers.vllm_gpu1，并核对其模型为DeepSeek。
+
+3. 读取该对象的apiKey，保留字面值；再对照主配置，记录两处值不相同。
+
+验证依据或核验要求：本地保留截图可核对Provider文件；公开稿省略原值。
+
+易错点：主配置中DeepSeek的apiKey不是本题所指定Provider文件的值。
+
+结论边界：此题以Provider文件models.json为准；其值与主配置同名字段不同。公开稿两处原值均省略。
+
+#### Q242 移动项目owner
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在目标移动项目中定位定义owner属性的配置文件。
+
+2. 核对文件属于目标项目及对应版本。
+
+3. 读取owner原值并保留大小写、数字及连字符。
+
+验证依据或核验要求：尚需项目文件与属性的原始证据；目前未完成。
+
+易错点：仓库组织名、应用显示名称和项目owner不一定相同。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q243 HTTPS端口
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：找到Tronic网站配置中负责HTTPS的server部分。
+
+2. 读取对应listen配置并确认该块的TLS用途。
+
+3. 按题意记录端口，与HTTP端口和后端代理端口分开。
+
+验证依据或核验要求：目标HTTPS配置原值尚未复核。
+
+易错点：不能凭HTTPS惯例直接填443，也不能把模板存在说成已生效。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q244 TLS协议版本
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在同一HTTPS配置块定位ssl_protocols。
+
+2. 读取全部协议标识及版本，不只取第一个。
+
+3. 核对配置包含关系及目标文件版本，再与选项比较。
+
+验证依据或核验要求：需目标配置中实际列出的两种协议；当前未完成。
+
+易错点：浏览器支持的协议或Nginx默认能力不能代替配置原值。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q245 密码套件顺序参数
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在题目所指HTTPS配置中查ssl_prefer_server_ciphers。
+
+2. 读取参数值，并解释其是否要求服务器套件顺序优先。
+
+3. 核对没有被其他同层或生效配置覆盖。
+
+验证依据或核验要求：参数及其值须来自目标配置；当前未完成。
+
+易错点：ssl_ciphers列表与ssl_prefer_server_ciphers的控制含义不同。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q246 证书SAN中的IP
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位该站点实际证书及其生成脚本或配置。
+
+2. 解析Subject Alternative Name中的IP Address类型项。
+
+3. 只汇总IP SAN，与脚本预期及题目两个地址核对。
+
+验证依据或核验要求：证书扩展与生成配置应相互对应；当前未完成。
+
+易错点：不要从证书CN、服务器绑定地址或DNS解析结果推断IP SAN。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q247 证书SAN中的DNS
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：复用同一证书或对应生成配置。
+
+2. 在SAN扩展中筛选DNS类型条目。
+
+3. 按完整DNS名称与题目选项核对，另列CN以免混淆。
+
+验证依据或核验要求：需SAN实际条目支持，当前未完成。
+
+易错点：证书Subject的CN不等于全部DNS SAN授权范围。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q248 根证书到期时间
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：先确认目标文件是根证书而非服务器叶证书。
+
+2. 解析其NotAfter原值及时间表示。
+
+3. 按题目格式和时区转换后记录完整到期时间。
+
+验证依据或核验要求：需要根证书身份、NotAfter及转换过程共同支持；尚未复验。
+
+易错点：脚本中的有效天数或文件修改时间都不能替代证书实际到期时间。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q249 安装WSL及默认WSL2命令
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位相关用户的ConsoleHost_history.txt。
+
+2. 查安装WSL以及设置默认WSL2的实际输入行。
+
+3. 保留命令参数与顺序，区分历史事实和建议安装命令。
+
+验证依据或核验要求：历史记录才支持本题实际命令；当前未完成。
+
+易错点：常见教程命令不能证明该设备上输入过相同命令。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q250 Windows日报任务完整名称
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定位Windows计划任务定义，确认对应日报业务。
+
+2. 读取任务URI或完整注册路径，而非只取显示短名。
+
+3. 结合触发器和动作确认目标任务，与WSL cron日报分开。
+
+验证依据或核验要求：任务定义中的URI及动作需对应；当前未完成。
+
+易错点：Windows任务计划与Linux cron同名任务不能互换。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q251 PowerShell端口转发目标
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：在PowerShell历史中筛选portproxy相关命令。
+
+2. 完整解析目标命令的监听参数与connect目标参数。
+
+3. 按题目实际输入历史取目标，另将当前注册表或动态脚本值作为不同时间状态。
+
+验证依据或核验要求：原历史命令尚需复验。
+
+易错点：不能用当前WSL动态地址改写过去命令中的目标地址。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q252 WSL虚拟磁盘总容量
+
+状态：成员复现待主复核。公开结论：256（GiB口径）。
+
+证据定位：local-artifact/gpt/P01_COM02_WSL/tool-logs/wsl-discovery.json；VHDX metadata VIRTUAL_DISK_SIZE_GUID
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 从WSL VHDX元数据读取VIRTUAL_DISK_SIZE_GUID对应虚拟容量。
+
+2. 保留原字节数274877906944，与宿主文件长度187435057152分别标记。
+
+3. 按1024³换算为256GiB，按题目格式回答。
+
+验证依据或核验要求：成员读取虚拟容量元数据支持256GiB；仍待主复核。
+
+易错点：虚拟容量、文件长度和文件系统已用/可用空间不是同一指标。
+
+#### Q253 VIP状态修改时间
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：按目标设备和管理员VIP修改端点筛选请求。
+
+2. 核对被修改用户、修改操作和成功响应属于同一事件。
+
+3. 读取并转换该事件时间，排除仅查询VIP状态的请求。
+
+验证依据或核验要求：尚缺完整请求与成功状态闭环。
+
+易错点：请求发出不等于状态修改成功，目标用户也不能从相邻记录借用。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q254 设备成功管理员登录次数
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：未完成原始检材复验，参考答案仅作线索。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：定义成功管理员登录的端点、设备匹配规则和成功状态条件。
+
+2. 枚举题目时间范围内全部匹配记录。
+
+3. 排除登录失败、刷新令牌及普通认证请求后计数，保留逐条清单。
+
+验证依据或核验要求：需可复算的匹配记录集合；当前未完成。
+
+易错点：访问管理员页面次数不是成功登录次数，重试也需按事件语义处理。
+
+结论边界：已有他人参考答案，但未完成本方原始证据闭环；赛后停止新增解题，不将参考值填作结论。
+
+#### Q255 VIP订单商品及数量
+
+状态：成员复现待主复核。公开结论：A（Oil 20、Ice 5）。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/32873；/var/lib/postgresql/18/main/base/16389/90873
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 从成员恢复的PG关系中选取当前可见orders，限定目标客户及题目订单范围。
+
+2. 通过商品关联键连接products，核对数量和商品名称。
+
+3. 成员结果为Oil20、Ice5，保留订单与商品对应明细。
+
+验证依据或核验要求：有效订单、商品及客户关系共同支持选项A；待主复核。
+
+易错点：不要把旧tuple、已删除订单或商品库存数量混入购买数量。
+
+#### Q256 订单发起设备
+
+状态：成员复现待主复核。公开结论：B（Redmi 23124RA7EO）。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/90873
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 固定Q255两笔目标订单及其客户/actor。
+
+2. 在活动记录中按同一订单或actor关联设备元数据。
+
+3. 读取品牌及型号，成员结果Redmi 23124RA7EO。
+
+验证依据或核验要求：对应活动记录支持成员选项B，待主复核。
+
+易错点：不能从某次无关登录或设备清单中选同品牌型号。
+
+#### Q257 订单交易总额
+
+状态：成员复现待主复核。公开结论：85000。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/90873
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 固定Q255同两笔当前可见订单。
+
+2. 读取各自有效金额70000、15000，并确认数据库币种口径。
+
+3. 用十进制相加得到85000，再与活动记录核对。
+
+验证依据或核验要求：金额来自同一订单集合，成员结果待主复核。
+
+易错点：客户端照片中的换汇显示金额不应替代数据库本币金额。
+
+#### Q258 当前订单状态
+
+状态：成员复现待主复核。公开结论：D（pending）。
+
+证据定位：/var/lib/postgresql/18/main/base/16389/32894；/var/lib/postgresql/18/main/base/16389/90873
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 使用事务可见性筛选后的两笔目标订单。
+
+2. 读取各自status原值，而非历史状态或活动说明。
+
+3. 核对两笔均为pending，按选项D作成员结论。
+
+验证依据或核验要求：当前有效记录支持pending，待主复核。
+
+易错点：有订单记录或有金额不代表已支付、已完成。
+
+#### Q259 PostgreSQL完整版本
+
+状态：成员复现待主复核。公开结论：D（18.4）。
+
+证据定位：/var/log/postgresql/postgresql-18-main.log.1；/var/lib/dpkg/status
+
+方法依据：复现说明（成员复现待主复核）。
+
+1. 读取/var/log/postgresql/postgresql-18-main.log.1中的启动版本信息。
+
+2. 对照/var/lib/dpkg/status中同一PostgreSQL包版本。
+
+3. 保留完整小版本18.4并匹配选项D。
+
+验证依据或核验要求：启动日志与包记录共同支持成员结果，待主复核。
+
+易错点：目录名18或PG_VERSION只能支持主版本，不足以确定18.4。
+
+### COM-03 NAS与阵列
+
+#### Q260 md0阵列UUID
+
+状态：正式复核。公开结论：C。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/mdadm/mdadm.conf
+
+方法依据：既有记录复述。
+
+1. 读取NAS系统盘/etc/mdadm/mdadm.conf的md0定义。
+
+2. 记录阵列UUID并对应到两块成员的superblock身份。
+
+3. 确认目标为md0且属于同一阵列后与选项核对。
+
+验证依据或核验要求：配置和成员元数据支持同一阵列身份。
+
+易错点：MD阵列UUID、EXT4文件系统UUID和磁盘分区UUID并非同一个值。
+
+#### Q261 Debian与OMV版本及升级前版本
+
+状态：正式复核。公开结论：B。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/usr/lib/os-release；COM03_NAS_DISK0.E01/分区2/var/log/apt/history.log；COM03_NAS_DISK0.E01/分区2/var/lib/dpkg/status
+
+方法依据：既有记录复述。
+
+1. 从/usr/lib/os-release读取当前Debian发行信息。
+
+2. 在/var/lib/dpkg/status定位OpenMediaVault当前安装版本。
+
+3. 再读/var/log/apt/history.log中的升级前后记录，将旧版本与当前版本分别记录。
+
+验证依据或核验要求：系统信息、包状态和升级历史相互对应，支持选项B。
+
+易错点：不要将安装包缓存名或旧日志版本作为当前运行版本。
+
+#### Q262 NAS网络配置
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/netplan/20-openmediavault-enp0s3.yaml；COM03_NAS_DISK0.E01/分区2/etc/openmediavault/config.xml
+
+方法依据：既有记录复述。
+
+1. 读取/etc/netplan/20-openmediavault-enp0s3.yaml中的目标接口配置。
+
+2. 对照/etc/openmediavault/config.xml中的同一接口项目。
+
+3. 分别整理地址、前缀、网关等题目要求项，并核对接口身份。
+
+验证依据或核验要求：两个配置文件中目标接口的网络参数形成交叉核对。
+
+易错点：配置记录不直接证明某时刻网络连通；不能取其他接口或回环地址。
+
+#### Q263 双配置中的挂载UUID
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/fstab；COM03_NAS_DISK0.E01/分区2/etc/openmediavault/config.xml
+
+方法依据：既有记录复述。
+
+1. 在/etc/fstab定位目标数据文件系统的挂载条目。
+
+2. 从源字段读取文件系统UUID，再与OpenMediaVault存储配置对应。
+
+3. 确认两者指向同一存储对象后按题目格式作答。
+
+验证依据或核验要求：fstab与config.xml双来源支持目标UUID。
+
+易错点：不要把mdadm的阵列UUID误当文件系统挂载UUID。
+
+#### Q264 指定日期Web错误日志数
+
+状态：正式复核。公开结论：B。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/nginx/openmediavault-webgui_error.log.1
+
+方法依据：既有记录复述。
+
+1. 读取openmediavault-webgui_error.log.1，确认覆盖题目指定日期。
+
+2. 按日志记录时间及ERROR等级筛选。
+
+3. 对匹配事件计数，并排除其他日期与warning记录。
+
+验证依据或核验要求：保留筛选范围和匹配明细以复算，对应选项B。
+
+易错点：行数不必等于事件数；错误堆栈续行不能重复计为多个事件。
+
+#### Q265 TCoin宣传图片数量
+
+状态：正式复核。公开结论：9。
+
+证据定位：由两块有效成员重建 md0 派生镜像；EXT4文件枚举、原图目视及OCR交叉复核。
+
+方法依据：既有记录复述。
+
+1. 核对两块MD成员同阵列、role0和role2及一致events；记录layout2、chunk512KiB、data offset18432扇区。
+
+2. 按left-symmetric RAID5条带与校验位置异或恢复缺失role1，写新派生镜像。
+
+3. 验证11处EXT4超级块CRC32C并用独立文件系统导出检查，已记录92文件、61目录。
+
+4. 枚举图片，结合缩略图、OCR和逐图目视筛出TCoin宣传图，最终9张。
+
+验证依据或核验要求：阵列身份、文件系统校验及内容筛选共同支持9张。
+
+易错点：图片文件总数不等于宣传图数量，OCR命中也不能自动替代目视确认。
+
+#### Q266 USERS组人数
+
+状态：正式复核。公开结论：C。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/group
+
+方法依据：既有记录复述。
+
+1. 打开/etc/group并定位题目指定的USERS组条目。
+
+2. 按组成员字段拆分显式用户名并去除空项。
+
+3. 依题目该字段口径计数，与选项C核对。
+
+验证依据或核验要求：保留原组行与拆分列表，计数可回查。
+
+易错点：不要把系统全部用户数当该组显式成员数；主组归属属于另一统计口径。
+
+#### Q267 SMB白名单未包含账号
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/samba/smb.conf
+
+方法依据：既有记录复述。
+
+1. 读取/etc/samba/smb.conf中目标共享的允许用户配置。
+
+2. 确定题目给定用户集合及白名单中的实际用户名/组表达式。
+
+3. 比较集合，找不在该允许范围中的账号。
+
+验证依据或核验要求：应能列出候选与允许列表逐项比较依据。
+
+易错点：账号存在于系统或普通组不自动表示被该Samba共享允许。
+
+#### Q268 SSH与普通组交集人数
+
+状态：正式复核。公开结论：5。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/group
+
+方法依据：既有记录复述。
+
+1. 在/etc/group分别定位SSH组与题目普通组。
+
+2. 把两组显式成员拆成去重集合。
+
+3. 求集合交集并计数，得到5。
+
+验证依据或核验要求：原始组行、两个集合及交集清单支持5。
+
+易错点：求交集不是求并集，也不能把SSH配置允许项误当/etc/group组成员。
+
+#### Q269 Admin组成员
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/group
+
+方法依据：既有记录复述。
+
+1. 在/etc/group定位题目管理员组。
+
+2. 读取冒号分隔记录中的成员列表。
+
+3. 按原始账号保留成员并检查是否有多个，公开稿省略账号值。
+
+验证依据或核验要求：管理员组成员字段直接提供结论。
+
+易错点：管理员组成员、拥有sudo权限的全部主体、当前登录管理员不是同一集合。
+
+#### Q270 SSH白名单配置
+
+状态：正式复核。公开结论：A。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/ssh/sshd_config
+
+方法依据：既有记录复述。
+
+1. 读取/etc/ssh/sshd_config并定位AllowUsers、AllowGroups等访问限制。
+
+2. 检查是否位于全局段或Match条件内，保留相关上下文。
+
+3. 按实际配置解释用户名白名单或组白名单，并与选项A比较。
+
+验证依据或核验要求：配置项与作用范围共同支持结论。
+
+易错点：AllowGroups的组名不能直接解释为单个用户名。
+
+#### Q271 成功SSH认证次数
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：NAS / var/log/journal；接受认证事件与后续会话链。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：以完整journal范围筛选成功Accepted认证事件，保留时间、进程/会话上下文。
+
+2. 关联session opened、断开及关闭，检查额外事件是否真实独立。
+
+3. 独立扫描journal条目与entry数组交叉计数，均为26。
+
+4. 记录选项不含26的冲突，不能自行缩窄为某一天取25。
+
+验证依据或核验要求：额外一次具有会话链；本题保持未定而非强选。
+
+易错点：认证次数、日志行数、会话数是不同指标。
+
+结论边界：全范围得到26次成功认证，选项不含26；只取其中一天得到25但题面未限定，故不强选。
+
+#### Q272 可识别SSH会话数
+
+状态：正式复核。公开结论：D。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/wtmp.db；COM03_NAS_DISK0.E01/分区2/var/log/wtmp
+
+方法依据：既有记录复述。
+
+1. 读取wtmp.db及wtmp中的SSH登录/会话记录。
+
+2. 结合Accepted、session opened、断开和关闭信息建立会话对应关系。
+
+3. 按题意计可识别会话，而非把每个日志事件计一次。
+
+验证依据或核验要求：会话级关联支持选项D。
+
+易错点：缺少Logout不自动等于失败认证，也不能将认证条数直接代替会话数。
+
+#### Q273 成功SSH会话源IP
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/wtmp.db；COM03_NAS_DISK0.E01/分区2/var/log/wtmp
+
+方法依据：既有记录复述。
+
+1. 复用已确认的成功SSH会话集合。
+
+2. 从wtmp.db/wtmp对应记录读取RemoteHost或来源字段。
+
+3. 对来源按题意去重或列举，保留每个来源对应的成功会话。
+
+验证依据或核验要求：来源必须能回到成功会话，不能混入失败尝试。
+
+易错点：sshd配置允许地址或端口转发地址不等于实际会话来源。
+
+#### Q274 失败登录日志大小
+
+状态：正式复核。公开结论：A。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/btmp
+
+方法依据：既有记录复述。
+
+1. 定位NAS系统盘/var/log/btmp原文件。
+
+2. 读取其逻辑字节长度，并核对题目单位。
+
+3. 保持该日志身份与题目失败登录日志一致后匹配选项A。
+
+验证依据或核验要求：原文件长度支持选项，不能由解析输出大小推算。
+
+易错点：导出的文本大小、压缩包大小和磁盘分配大小均不是本题文件长度。
+
+#### Q275 同一启动组raid disk 0设备名
+
+状态：待复核或未解。公开结论：未定。
+
+证据定位：NAS / var/log/journal；按 boot_id 分组的 md/EXT4启动记录。
+
+方法依据：未解后续步骤。
+
+1. 建议后续核验：按journal的boot_id将启动事件分组。
+
+2. 在每一组关联md阵列、raid disk0角色与设备名。
+
+3. 比较12组结果：前11组为sdb，末组为sdd，记录题目未唯一限定组别。
+
+验证依据或核验要求：跨启动差异已明确，本题仍无法唯一确定。
+
+易错点：sdb/sdd不是跨启动恒定身份；相同容量或UUID不能替代启动范围。
+
+结论边界：12个启动组中前11个raid disk 0为sdb，最后一个为sdd；题面未明确组别，无法唯一确定。
+
+#### Q276 md0容量变化字节数
+
+状态：正式复核。公开结论：21455962112。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/journal/[长标识]/system.journal
+
+方法依据：既有记录复述。
+
+1. 在目标启动日志定位md0容量变化事件。
+
+2. 读取变化前后扇区数及日志表示单位。
+
+3. 按标准512字节扇区换算变化量，结果21455962112字节。
+
+验证依据或核验要求：原扇区计数及512字节换算支持精确字节值。
+
+易错点：不要用厂商GB标称值、文件长度或1024字节扇区替代。
+
+#### Q277 EXT4数据与配额模式
+
+状态：正式复核。公开结论：A。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/var/log/journal/[长标识]/system.journal
+
+方法依据：既有记录复述。
+
+1. 在journal中定位与目标md0/EXT4对应的挂载事件。
+
+2. 读取日志中数据模式与配额模式相关描述。
+
+3. 保留同次挂载上下文，与选项A逐项对应。
+
+验证依据或核验要求：具体挂载日志支持实际记录的模式。
+
+易错点：fstab期望参数和日志中的实际挂载状态应区分，不能取其他卷的记录。
+
+#### Q278 最低SMB协议版本
+
+状态：正式复核。公开结论：A。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/samba/smb.conf
+
+方法依据：既有记录复述。
+
+1. 读取/etc/samba/smb.conf的全局协议配置。
+
+2. 定位最低SMB协议限制并保留原值。
+
+3. 检查是否存在题目所指作用域或覆盖项，再对照选项A。
+
+验证依据或核验要求：最低协议配置项提供结论。
+
+易错点：最低版本不是最高允许版本，也不能由Samba软件版本直接推出。
+
+#### Q279 文件系统挂载点
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：COM03_NAS_DISK0.E01/分区2/etc/fstab
+
+方法依据：既有记录复述。
+
+1. 在/etc/fstab用目标文件系统UUID定位挂载条目。
+
+2. 读取同一行的挂载目录。
+
+3. 结合OpenMediaVault存储配置核对目标与目录的对应，保留完整路径于本地。
+
+验证依据或核验要求：来源UUID和挂载点属于同一条目。
+
+易错点：目录名称相似或目录已存在，不自动证明它对应目标文件系统。
+
+### DOC-01 资金流水
+
+#### Q280 邮件委托资金总额
+
+状态：正式复核。公开结论：23010346.36。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 读取DOC-01邮件委托指示及PyCHK_to_police.xlsx，确认资金范围。
+
+2. 依据交易行From/To校正两处工作表标签错误，避免错归钱包或重复纳入。
+
+3. 按Reference Data_Rate统一USD，采用Decimal汇总。
+
+4. 核对0.0004 USD的原始口径差异，保留两位小数结果23010346.36。
+
+验证依据或核验要求：邮件范围、汇率、校正和合计可对应；微小差异不改变两位小数。
+
+易错点：不能把全部交易流量重复相加当最初委托金额。
+
+结论边界：存在两处工作表标签错误与0.0004 USD的原始口径差异；已显式对齐，不改变两位小数结果。
+
+#### Q281 最终资金留存地址数
+
+状态：正式复核。公开结论：B。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 先按交易标识去重并保留成功交易。
+
+2. 逐地址计算成功转入、转出及题目范围内的净留存。
+
+3. 结合资金路径识别仍有余额的终点，统计其地址数并对应选项B。
+
+验证依据或核验要求：终点列表及各自留存金额应可回查。
+
+易错点：转入过资金的地址不一定是最终留存地址；失败交易不能记已到账。
+
+#### Q282 最终停留资金最多的钱包
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 复用Q281确认的最终留存终点集合。
+
+2. 把各终点净留存统一为USD。
+
+3. 比较留存金额，回查最大项的实际地址及相关交易。
+
+验证依据或核验要求：排名依据是净留存，不是累计流量；原地址仅本地保留。
+
+易错点：高频中转钱包可能交易额最大但最终余额很低。
+
+#### Q283 黑洞地址用途
+
+状态：正式复核。公开结论：B（销毁/黑洞地址的常见用途）。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 定位题目提及的Burn/Sink或黑洞地址语境。
+
+2. 解释此类地址常用于让资产退出可正常支配流通的销毁场景。
+
+3. 将一般用途与选项B对应，同时区分本案是否有具体销毁交易证据。
+
+验证依据或核验要求：本题支持的是地址类别常见用途。
+
+易错点：仅见到地址标签或地址存在，不能证明某笔资金已经销毁。
+
+#### Q284 全链路钱包数量
+
+状态：正式复核。公开结论：26。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 读取完整链路全部交易行的From和To。
+
+2. 按对应地址规则规范化比较，并保留原展示字符串。
+
+3. 取发送方与接收方去重并集，得到26个钱包。
+
+验证依据或核验要求：完整地址集合计数支持26。
+
+易错点：只数工作表或只数发送方会漏掉没有独立表的地址。
+
+#### Q285 缺少独立工作表的钱包
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 从完整交易链得到去重地址集合。
+
+2. 核对每张独立工作表实际对应的钱包，先修正错误标签。
+
+3. 计算链路地址集合减工作表地址集合，得到缺表钱包。
+
+验证依据或核验要求：差集项仍可在交易对手字段回查。
+
+易错点：不能用未校正的表标题直接做集合差，否则会制造假缺失。
+
+#### Q286 该钱包币种
+
+状态：正式复核。公开结论：A（Bitcoin）。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 固定Q285识别出的缺表地址。
+
+2. 回查出现该地址的交易网络、币种及关联记录。
+
+3. 确认其属于Bitcoin并匹配选项A。
+
+验证依据或核验要求：网络/币种记录与同一地址对应。
+
+易错点：地址外观只能辅助筛查，不能替代交易记录中的网络证据。
+
+#### Q287 除Q Coin以外币种数
+
+状态：正式复核。公开结论：3。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 读取链路记录中实际出现的币种字段。
+
+2. 统一同币种的书写变体，按定义去重。
+
+3. 剔除Q Coin后计数，结果3。
+
+验证依据或核验要求：币种集合和排除项可列出复算。
+
+易错点：交易表数、钱包数与币种数没有一一对应关系。
+
+#### Q288 首次跨链资金最多币种
+
+状态：正式复核。公开结论：C。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 按时间整理跨链/兑换路径，并识别各币种第一次进入事件。
+
+2. 将首次转换金额用题给汇率统一USD。
+
+3. 只比较各币种首次进入金额，排除之后回流或再次转换，按最大项匹配选项C。
+
+验证依据或核验要求：首次事件与换算金额需能对应到交易行。
+
+易错点：把某币种全部历史流入合计会改变题目“首次跨链”口径。
+
+#### Q289 成功交易手续费USD
+
+状态：正式复核。公开结论：24.84。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 按交易标识去重，筛出405条成功交易，排除1条失败交易。
+
+2. 检查Gas Fee字段单位，并按Reference Data_Rate换成USD。
+
+3. 每笔费用只计一次，以Decimal求和得到24.84 USD。
+
+验证依据或核验要求：去重键、状态筛选和费用换算明细支撑合计。
+
+易错点：发送与接收表重复记录会把费用算两遍；原已为USD的列不能再次换汇。
+
+#### Q290 转入转出总额最大钱包
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 复用去重后的成功交易集。
+
+2. 按地址分别汇总转入与转出本金USD，费用单独保留。
+
+3. 按题意将两类本金流量合计并排名，回查最大项的地址。
+
+验证依据或核验要求：最大累计流量地址由分项明细支持。
+
+易错点：累计转入加转出不是净留存，也不应额外把手续费计作本金。
+
+#### Q291 累计中转停留最长钱包
+
+状态：正式复核。公开结论：[敏感值不公开]。
+
+证据定位：DOC-01/PyCHK_to_police.xlsx
+
+方法依据：既有记录复述。
+
+1. 按题目资金路径整理每个钱包可匹配的入出区间。
+
+2. 对每一有效区间计算停留秒数，再按地址累计。
+
+3. 比较累计值，已归档最大6479秒、次大6456秒，回查对应钱包。
+
+4. 保留原匹配口径；当前原脚本已清理，不补造多笔并行资金的具体分配算法。
+
+验证依据或核验要求：现有记录支持累计结果及排名边界，但本次没有重跑匹配脚本。
+
+易错点：一笔最长停留不等于累计最长；同时有多笔资金时不能随意最近邻配对。
 
 ## 可复用的方法约束
 
