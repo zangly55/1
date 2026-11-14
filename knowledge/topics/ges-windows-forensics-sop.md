@@ -85,3 +85,11 @@ ges.exe read "/case/.../data.csv" --offset 0 --limit 100
 - 中文、空格、括号路径必须整体加引号；含 `|` 等元字符的 pattern 用 `--pattern-file`。
 - `ges copy` 导出物是本地副本，不能再标 `Goldeneyes://` 溯源链接。
 - 不要重复执行队长已登记的打开、init、导入、索引与解析任务；准备请求写入自己的 `progress.json`。
+
+### 题目网页文字导出的补充方法（2026-11-14）
+
+- 来源：用户要求提供可在题目网页中自行运行的脚本；作者 Codex。依据 [Microsoft Edge 控制台文档](https://learn.microsoft.com/en-us/microsoft-edge/devtools/console/console-javascript)、[MDN innerText](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/innerText)、[Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) 与 [createObjectURL](https://developer.mozilla.org/en-US/docs/Web/API/URL/createObjectURL_static)。
+- 本地交付 JavaScript：读取 `document.body.innerText`；将本次页面文字追加到当前页面内存中的记录数组，完全相同的文字不重复追加；用 Blob 下载带 UTF-8 BOM 的文本，并尝试通过控制台 `copy()` 复制。脚本不请求题库接口、不读取浏览器凭据、不操作答题选项或提交按钮。
+- 操作：打开题目页并等待文字加载，在控制台运行；需要分页、切换题目或展开折叠内容时由用户操作后再次运行。内存记录会在页面刷新/重新加载后丢失，但已下载的文件保留。导出包含页面导航等可见文字，尚非整理后的完整题库。
+- 已验证：本地 Node.js `--check` 语法检查通过。**尚未在目标比赛页面运行或验证题目数量**。DOM 文字不含图片中文字、未加载分页或不可访问的嵌入页面，必须以题号和总数复核，不能宣称已获取全部题目。
+- 原始题目导出文件只在本地保留；公开记录不包含试题正文、账户信息、页面截图、令牌或答案。
