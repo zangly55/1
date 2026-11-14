@@ -1975,3 +1975,10 @@ Q193租约目标MAC与题面相差一个字节，参考答案实际对应近似M
 - [PostgreSQL tuple事务标志](https://github.com/postgres/postgres/blob/REL_18_STABLE/src/include/access/htup_details.h)、[页校验算法](https://github.com/postgres/postgres/blob/REL_18_STABLE/src/include/storage/checksum_impl.h)、[WAL记录结构](https://github.com/postgres/postgres/blob/REL_18_STABLE/src/include/access/xlogrecord.h)：成员离线解析与一致性检查所用格式参考。
 
 本页不包含原始附件、产品许可证、解密凭据或未脱敏截图；公开文本保留方法和来源边界，不等价于可独立下载的完整检材复现包。
+
+
+## 2026-11-14 清理结果
+
+WP上传并回读一致后，用户明确确认“删除本场资料，保留填写后的模板”。已删除并逐项验证本场三个工作/案件/解压目录，以及答案文件、题目文本和两份参考答案附件，共七个目标。工作目录内指向外部运行时的联接仅移除联接，外部工具仍存在；未删除skill、知识库及上午案件。
+
+填写后的团体赛模板保留：回读仍为131张图片，文件31326338字节，ZIP完整性检查通过。原检材所在A盘未挂载，原件未删除；本次临时复盘目录的最后删除被自动审批以“blocked by policy”拒绝，该目录仍保留，未绕过拦截。因此不能表述为所有本地材料均已清空。公开知识库仅保留脱敏WP及方法，完整原始检材不在仓库中。
