@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-16 取证 skill 的 agent 配置咨询
+
+[digital-forensics 的 Codex agent 配置方案](topics/digital-forensics-agent-configuration.md)：区分直接对话的项目助手与可委派的自定义子代理，提供复用统一 skill 的脱敏配置示例与验收步骤。已核查官方文档；尚未部署或验证自定义角色启动，不代表工具已连接或检材已分析。
+
 ## 2026-11-14 下午团体赛（赛后WP）
 
 新增[答辩知识点与操作步骤](cases/20261114132840G-meiya-team-preparation.md#答辩知识点与步骤赛后讲解)：按知识点、定位、操作、核验和边界整理八个专题，供已有工作讲解，不代表重新分析或现场复验。
