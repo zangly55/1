@@ -1,0 +1,52 @@
+# digital-forensics 的 Codex agent 配置方案
+
+- 日期：2026-11-16（Asia/Shanghai）。
+- 来源：用户提供的 digital-forensics 统一入口，以及 OpenAI 官方配置文档；整理者 Codex。
+- 状态：配置咨询与文档核查；本次没有安装 agent、修改本机 skill/config、运行检材或验证自定义角色的实际启动。示例为建议配置，不是部署完成记录。
+- 分类：topics / 取证工作流配置。没有同题已有条目，单独归档；不改变现有 skill 分类。
+- 公开处理：省略本地用户名、具体磁盘路径、案件信息与所有凭据。配置路径占位符必须替换为本机真实路径。
+
+## 选择哪种入口
+
+直接与固定取证助手对话：可用专用项目的 AGENTS.md，在该项目启动任务时要求读取现有 digital-forensics/SKILL.md。这是给主 agent 加上项目规则。官方说明见 [AGENTS.md](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。
+
+让主聊天按名称委派取证任务：使用自定义子代理。官方文档规定个人配置放在 ~/.codex/agents/，项目配置放在 .codex/agents/；独立 TOML 至少含 name、description、developer_instructions。模型设置可省略，沿用解析后的默认设置；权限、服务提供方及 MCP 连接继承父会话。见 [Subagents](https://learn.chatgpt.com/docs/agent-configuration/subagents)。
+
+两种入口都引用同一 skill，避免复制全部专家指南造成维护分叉。skill 负责方法和路由，agent 负责在具体任务中执行。
+
+## 建议子代理配置
+
+文件名示例：digital-forensics.toml。下面路径只是占位符：
+
+```toml
+name = "digital_forensics"
+description = "在用户明确要求委派时处理数字取证、CTF、证据复核与取证文书。"
+
+developer_instructions = """
+你是数字取证助手。开始任务前读取：
+<本机绝对路径>/digital-forensics/SKILL.md
+按该入口加载 Harness² 与取证辅助约束，只选择当前目标需要的主分支。
+相对引用以被读取指南所在目录解析，保留原模块和脚本路径。
+核对案件、检材、来源与状态；原检材只读，派生结果写入工作目录。
+输出结论、证据定位、实际方法和未解决缺口，区分事实、推断与候选。
+工具或连接缺失时报告影响，不伪造结果。
+默认自行执行，不主动再委派；Kimi 仅在用户明确点名时使用。
+遵守用户的知识库归档规则，公开材料先脱敏。
+"""
+```
+
+以上指令是基于用户现有 skill 的适配建议。原 skill 已包含完整的 Harness² 联动、哈希显式触发、专家依赖、按需加载及报告/笔录边界，因此包装层无需复制全部流程。实际依赖仍须按选中分支核实；新增角色本身不会安装火眼、网钜、调试器或连接新的 MCP。
+
+调用示例：请调用 digital_forensics 子代理，仅检查指定 APK 的包名和权限，按静态分析分支处理。
+
+## 如需直接对话的主 agent
+
+在专用项目根目录的 AGENTS.md 写入简短角色说明，要求开始取证任务前读取真实的 digital-forensics/SKILL.md，按入口执行；保留用户当前的 Kimi、只读检材与脱敏归档约束。现有文件应备份后合并，不能覆盖其他项目规则。由该目录开启新会话，先核对实际加载的指令来源。
+
+## 部署后的验收建议（本次未执行）
+
+1. 核对 TOML 可解析，以及 skill、Harness² 和所选专家模块的真实路径。
+2. 新会话实际调用角色并查看是否产生预期子代理；没有角色选择能力的调用接口不能仅凭文件存在就宣称已启用。
+3. 用无检材咨询验证：APK 权限走静态分支；笔录核对只给问题和依据；普通表格统计不进入取证流水分支。
+4. 保持 digital-forensics 为统一 skill 入口，已合并模块不因新增 agent 重新启用，插件缓存与工具连接保持由其支持方式管理。
+5. 本机版本差异或运行时发现问题须记录为待核验，不以官方文档代替本机实测。
