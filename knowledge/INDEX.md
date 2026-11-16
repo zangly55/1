@@ -1,8 +1,8 @@
 # 数字取证知识库
 
-## 2026-11-16 取证 skill 的 agent 配置咨询
+## 2026-11-16 取证 skill 的 agent 配置与部署
 
-[digital-forensics 的 Codex agent 配置方案](topics/digital-forensics-agent-configuration.md)：区分直接对话的项目助手与可委派的自定义子代理，提供复用统一 skill 的脱敏配置示例与验收步骤。已核查官方文档；尚未部署或验证自定义角色启动，不代表工具已连接或检材已分析。
+[digital-forensics 的 Codex agent 配置方案](topics/digital-forensics-agent-configuration.md)：区分直接对话的项目助手与可委派的自定义子代理，提供复用统一 skill 的脱敏配置示例与验收步骤。已部署 digital_forensics 自定义角色；本机配置校验、运行时角色发现和45处本地引用检查通过，保持原统一 skill 分类。未进行模型子代理实际执行或真实检材分析，不代表取证产品已连接。
 
 ## 2026-11-14 下午团体赛（赛后WP）
 
