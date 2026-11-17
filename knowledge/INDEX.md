@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-17 美亚杯经验分享资料
+
+[经验分享资料导航与知识点清单](topics/2026-meiya-experience-sharing-materials.md)：面向11月14日个人赛和团体赛的分享选材，汇总10个案例卡、可用展示素材、备赛与提交复盘及一手资料入口。仅整理已有WP与部分官方文档，未制作PPT、未重新分析检材；保留内部核验、成员复现、未决和自制实验边界。
+
 ## 2026-11-17 每日学习：SQLite WAL 与 TCP 分析
 
 新增 [WAL 有效帧与提交边界](topics/sqlite-wal-commit-validation.md)及 [Wireshark TCP 分析标记边界](topics/wireshark-tcp-analysis-boundaries.md)，补充现有离线字段语义专题。SQLite 3.50.4 自制样例的四项断言通过；TCP 部分仅官方文档交叉核对，均非原始检材复验。[学习目录](topics/competition-wp-learning.md)记录阅读范围、验证局限及本轮 digital_forensics 子代理实际启动；不声称准确率提升。
