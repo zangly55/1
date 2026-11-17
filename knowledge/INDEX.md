@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-17 每日学习：SQLite WAL 与 TCP 分析
+
+新增 [WAL 有效帧与提交边界](topics/sqlite-wal-commit-validation.md)及 [Wireshark TCP 分析标记边界](topics/wireshark-tcp-analysis-boundaries.md)，补充现有离线字段语义专题。SQLite 3.50.4 自制样例的四项断言通过；TCP 部分仅官方文档交叉核对，均非原始检材复验。[学习目录](topics/competition-wp-learning.md)记录阅读范围、验证局限及本轮 digital_forensics 子代理实际启动；不声称准确率提升。
+
 ## 2026-11-16 取证知识每日学习
 
 [学习目录与方法索引](topics/competition-wp-learning.md)：已配置每日北京时间09:00检索取证知识点、实战经验、案例、官方文档和近期及往届WP，不限比赛材料。首批选读2026西电长安杯、2026平航杯和2025美亚杯个人赛，保存三份署名摘要与六条参考路径，另补[Volatility符号匹配](topics/volatility3-symbol-matching.md)官方文档知识，保持官方题解/原作者报告/争议状态。未取得原检材复验；2024美亚杯页面超时待重试。方法已接入本机 digital_forensics 的按需索引，配置与链接校验通过，不声称准确率已提升。
