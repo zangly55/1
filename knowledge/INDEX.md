@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-18 每日学习：NTFS USN
+
+新增 [USN 变长记录、原因位与日志实例边界](topics/ntfs-usn-record-boundaries.md)，依据两份 Microsoft 官方文档；六组合成字节解析测试通过，未采集卷日志或复验原始检材。已纳入[学习目录](topics/competition-wp-learning.md)及本地按需索引。
+
 ## 2026-11-17 美亚杯经验分享资料
 
 [经验分享资料导航与知识点清单](topics/2026-meiya-experience-sharing-materials.md)：面向11月14日个人赛和团体赛的分享选材，汇总10个案例卡、可用展示素材、备赛与提交复盘及一手资料入口。仅整理已有WP与部分官方文档，未制作PPT、未重新分析检材；保留内部核验、成员复现、未决和自制实验边界。
