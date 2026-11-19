@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-19 学习补跑：systemd journal
+
+新增 [journal 时间与 JSON 导出边界](topics/systemd-journal-time-export-boundaries.md)：选读两份 v255 官方文档，未执行命令或复验检材。今日自动轮次因工作区路由超时终止，本次在用户询问后补跑；状态及限制见[学习目录](topics/competition-wp-learning.md)，不表示自动化故障已修复。
+
 ## 2026-11-18 每日学习：NTFS USN
 
 新增 [USN 变长记录、原因位与日志实例边界](topics/ntfs-usn-record-boundaries.md)，依据两份 Microsoft 官方文档；六组合成字节解析测试通过，未采集卷日志或复验原始检材。已纳入[学习目录](topics/competition-wp-learning.md)及本地按需索引。
