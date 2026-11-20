@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-20 DIDCTF 题目导出
+
+[按分类导出题目方法与验证边界](topics/didctf-question-export.md)：已核对站点公开前端，完成本地脚本与合成测试；尚未登录实测。仅归档方法，不上传原题、会话信息或网页脚本。
+
 ## 2026-11-20 每日学习：Android CE/DE
 
 新增 [Android FBE 存储与证据覆盖](topics/android-fbe-ce-de-evidence-scope.md)，依据两份近期更新的 Android 官方文档，区分锁屏、首次解锁、CE/DE 与多用户采集范围。仅文档核对，未连接设备或复验检材；阅读范围与运行状态见[学习目录](topics/competition-wp-learning.md)。
