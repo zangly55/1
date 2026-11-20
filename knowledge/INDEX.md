@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-20 每日学习：Android CE/DE
+
+新增 [Android FBE 存储与证据覆盖](topics/android-fbe-ce-de-evidence-scope.md)，依据两份近期更新的 Android 官方文档，区分锁屏、首次解锁、CE/DE 与多用户采集范围。仅文档核对，未连接设备或复验检材；阅读范围与运行状态见[学习目录](topics/competition-wp-learning.md)。
+
 ## 2026-11-19 学习补跑：systemd journal
 
 新增 [journal 时间与 JSON 导出边界](topics/systemd-journal-time-export-boundaries.md)：选读两份 v255 官方文档，未执行命令或复验检材。今日自动轮次因工作区路由超时终止，本次在用户询问后补跑；状态及限制见[学习目录](topics/competition-wp-learning.md)，不表示自动化故障已修复。
