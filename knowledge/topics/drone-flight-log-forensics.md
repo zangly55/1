@@ -50,3 +50,11 @@ pydjirecord 作者说明 v13+ 无相应解密条件时仍可输出文件头信�
 ## 本轮工具准备完成记录
 
 用户随后授权代为下载。已从作者发布地址下载并解压 CsvView 4.3.0、DatCon 4.3.0、dji-log-parser v0.5.7 Windows x64；三份 ZIP 的长度与 CRC 检查通过，下载来源和文件清单保留本地。未运行安装程序，未用原始日志测试，不把压缩包检查称作解析能力或二进制安全审计。具体本机路径仅留本地速查清单。
+
+## dji-log-cli 0.5.7 本机参数核对（2026-11-21）
+
+实际运行该 Windows 发布包的 --help 与 --version 成功，版本输出为 dji-log-cli 0.5.7；这只是启动和参数检查，没有原始日志实测。--csv 后必须提供文件路径，可与 --kml、--output 配合分别保存 CSV、轨迹和 JSON，不能照抄 README 的无值 --csv 简写。
+
+进一步读固定标签源码确认：该 CLI 对 v13+ 无 API Key 时退出；有 Key 时向服务请求 keychain，再解析记录与帧。没有只读文件头或导入本地 keychain 的选项。上文所述库层可保存 keychain 后离线使用，不代表该版本 EXE 暴露了同样接口。pydjirecord 的 header-only 行为也不能套用于此 EXE。[v0.5.7 CLI 源码](https://github.com/lvauvillier/dji-log-parser/blob/v0.5.7/dji-log-cli/src/main.rs)
+
+本地工具目录已保存中文使用说明及不含凭据的示例命令；没有执行日志解析或联网申请 keychain。
