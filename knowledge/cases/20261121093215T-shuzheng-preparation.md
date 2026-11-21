@@ -59,3 +59,11 @@ Q118保留日期口径：服务器/etc/timezone为UTC，原UTC日期11月14日Ac
 手机子代理从用户原RAR成功解包派生副本，数据库连同WAL/SHM另复制分析。Q85按ZORIGINATED和CFAbsoluteTime转UTC+8限定日期；Q86短信原文与时间互证；Q87—88以ZNOTE.ZBODY→ZNOTEBODY.Z_PK关联账号备忘与报销条目。Q89使用history_visits关联history_items并按visit_time取最新，不能以URL表ID大小替代访问顺序。Q90按阅读历史时间，Q91仅统计downloadedChapters的JSON数组长度，不混入全部章节目录。Q92原收藏时间为无时区文本，保留原值，不擅加8小时。Q93只验证相对于题设基准的离线到期时间，未联网使用凭据，不能扩展为服务器实际接受登录。Q94区分disabled源domain与api_base子域。Q95—98从指定plist读取learningLanguage并严格type(v) is bool统计88个、其中true14个，排除数字/字符串。
 
 Q85—94已作为第三批十题写入，正式本地稿共80条；Q95—98四条等待凑齐下一批，程序Q102与综合组继续处理中。隐私值不公开，仅保留题号、原库表名、字段、方法与验证边界。
+
+### 综合计算机首批与程序建模
+
+综合计算机的文件系统解析已成功，但GES挂载入口仍空、应用插件在排队，因此子代理依据原E01只读解析LVM/ext4，记录卷UUID、inode、extent与物理偏移。首批Q51/52从systemd单元和目标脚本互证自启执行链；Q53取AI助手provider字段；Q55从LMDB库内Base64 JSON恢复原条目；Q57按本地编码工具的词表解码异常邮件，验证格式校验值，再以VERA头、两个CRC和FAT16结构验证外层卷解锁；口令仅本地保存。Q72由闪传DOCX中的图像附件视觉复核编号。此处是题目已验证，非全部解析任务完成。
+
+上述六题与Q95—98组成第四批实操十题，本地daan.txt累计90条。Q74已获原文地址线索、Q102已完成程序建模，等待下一批发布。综合苹果备份已按电脑家庭日期线索解锁，class key与Manifest.db完整性检验通过，仍在进一步提取跨检材证据；不公开口令与家庭隐私。
+
+程序Q102静态恢复PACK1载荷：以实际解包实参和循环确认输入消费量、输出长度、PE结构及写出边界，未运行恢复PE。成功路径包含两次3DES-CBC与各自填充，源长度1098752，最终1098768字节；独立DES-EDE模型、系统CNG逐字节对照和解密回代一致。退化3DES密钥被某些第三方封装拒绝不等于题设路径无解；只对题目要求的最终派生文件计算SHA-256。依据[BCryptEncrypt官方文档](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptencrypt)与[CNG算法标识](https://learn.microsoft.com/windows/win32/seccng/cng-algorithm-identifiers)，实际参数来自本场静态字节，不公开具体密钥、flag或二进制。
