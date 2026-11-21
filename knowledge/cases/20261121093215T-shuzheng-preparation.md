@@ -83,3 +83,17 @@ Q70的下载记录通过asset UUID精确匹配手机ZASSET与Manifest JPEG，原
 微信字典补证：根据Zstd帧dictionary ID匹配本机已有iosweixin字典，而非无字典强解。170条Message（53压缩）与165条MsgSource均成功读取；全库连续扫描失败的4个帧前缀对应SQLite重组后可解的活动大字段，不能视为损坏或删除消息。本支线未找到U盘口令；成功来源为前述密码管家。华为、备份、分身、尾号与金额相关有限复核也未产生支持Q71/Q75的独立证据，不能把iPhone聊天默认当华为分身记录。[Zstandard原始格式文档](https://github.com/facebook/zstd/blob/dev/doc/zstd_compression_format.md)。工具字典及聊天原文不再分发。
 
 综合苹果导出注意：本样本四个数据库Manifest声明长度与实际解密明文不同，独立校验PKCS#7后保留两种长度差异，不补零、不把填充计入哈希；目标JPEG长度一致。钥匙串支线2488条通过GCM认证、327条解包失败，未将后者当成功记录；旧Notes、系统Notes和第三方配对资源的范围也分开。[备份解密参考实现](https://github.com/jsharkey13/iphone_backup_decrypt/blob/master/src/iphone_backup_decrypt/iphone_backup.py)、[钥匙串格式参考实现](https://github.com/dunhamsteve/ios/blob/master/cmd/irestore/irestore.go)。本案使用有限解析脚本及认证/实际解锁验证，未运行参考仓库或检材代码。
+
+### 收尾补证：删除文件边界与华为备份复现
+
+2026-11-21，用户补充电脑豆包缓存路径和华为备份候选，要求先复现来源。本次从原综合E01只读导出对应IndexedDB的000003.log（1081204字节），330个物理记录masked CRC32C通过，298个WriteBatch重组及长度/操作计数检查通过。按V8 text属性的两字节字符串提取，找到请求生成备份密码、后续10位长度要求及五个候选的回复。候选来源字符串及字节位置已本地保存；未发现用户所述概括标题的完全相同字面文本。不是登录豆包取得的在线记录，也不是把用户报告直接当复验成功。[LevelDB日志格式](https://chromium.googlesource.com/external/leveldb/+/HEAD/doc/log_format.md)、[WriteBatch实现](https://github.com/google/leveldb/blob/main/db/write_batch.cc)、[V8序列化实现](https://chromium.googlesource.com/v8/v8/+/refs/heads/main/src/objects/value-serializer.cc)。
+
+手机代理使用从缓存重新提取的候选，对原Huawei ZIP备份键执行AES-GCM认证成功；随后文件闪传与微信分身两个目标模块的manage.json、part.0.tar共4文件认证通过。备份版本7.0.0.525；本样本PBKDF2-HMAC-SHA256迭代10000实际通过，不将其泛化为所有版本。参考[CN121145226A](https://patents.google.com/patent/CN121145226A/zh)的字段布局和两级派生/认证路径，具体认证成功来自本次原件复验。仅解出两个必要模块，未宣称全部模块或火眼原失败任务已重解析完成；原件只读。
+
+Q71以FSend.db的file_record目标行回答接收路径；记录长度与电脑已下载文件相同仅作关联补证，不等于独立内容相等证明。Q75以module_name的分身标识和appIndex确认目标应用，关联MsgDB-6.db同会话的指定收款卡消息与后续收款确认。SQLite/WAL/SHM成组复制、只读查询，两库quick_check通过。此前华为口令缺口现已解除，凭据和私密聊天不公开。
+
+Q73补证完成：当前MFT47驻留数据长15字节；日志DeleteIndexEntryAllocation的undo保存目标文件名、MFT47/sequence32及删除前RealSize15，Deallocate旧头与当前已删除sequence33相符。USA修复与跨页重组后关联同次删除链，未见有效日志中删除后的重新分配；按驻留ValueLength导出并计算题目指定SHA-256。正文仍来自MFT，日志只交叉确认身份、长度与删除序列，不声称日志保存了正文，派生删除前模型也不是独立历史正文副本。[dfir_ntfs实现](https://github.com/msuhanov/dfir_ntfs/blob/master/dfir_ntfs/LogFile.py)、[Linux NTFS3日志实现](https://code.googlesource.com/linux/torvalds/linux/+/2656821f1f202d58224551b71eff41aafd1edf8b/fs/ntfs3/fslog.c)。
+
+Q63保持候选：MFT55声明37742字节、10簇的原映射，当前流头属于其他加密ZIP成员，缺少完整DOCX结构。全解密卷分别按OOXML成员头和EOCD反向边界雕刻均未找到有效DOCX，日志旧映射也没有不同的备选簇。已给出当前恢复流的哈希并明确覆盖限制，不能标作原技术方案哈希已确认；两个新解密应用tar库存也未提供原件。
+
+最终本地答题稿已补入最后8条并按题号排序，1—118各一条，回读检查无重复或缺号；117条有当前证据支持，Q63仅列候选。Q118继续保留UTC日期与UTC+8日期的不同计数。题目、候选原值、口令、密钥、个人信息、缓存、原件及未脱敏派生文件仅本地保留。没有官方判题反馈，不能将“有证据支持”写成官方正确率。
