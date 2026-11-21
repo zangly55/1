@@ -83,3 +83,15 @@
 轮换 Windows 程序静态分析主题，读取最新目录、INDEX、学习进度及相关恶意程序参考 WP 去重，新增 [PE 地址与构建时间戳边界](pe-address-timestamp-boundaries.md)。选读 Microsoft 的 PE Format（更新2026-09-10）与 IMAGE_DEBUG_DIRECTORY（更新2024-11-20），实际范围见方法卡。增量包括 RVA 与磁盘偏移的区别、证书目录例外、调试目录双地址字段以及 REPRO 对时间戳的影响。
 
 状态仅为两份官方文档交叉核对，未运行样本、验证签名、做合成实验或复验检材。既有比赛 WP 的答案和核验状态不变。本地方法索引已先备份再加入一条检索路由，格式校验通过，仍归 digital-forensics 学习分支；该索引不自动启动逆向执行或调试。未修改定时任务、权限或全局配置，不以本轮完成声称历史路由问题已修复。后续继续按缺口轮换未读 WP 或其他对象。
+
+## 2026-11-21 会话学习：无人机赛前准备
+
+用户要求下午无人机取证前查 WP 并列出本机缺少的工具。本轮归入 digital-forensics 知识学习分支，不启动解题、采集或后台同步。
+
+- [2021 美亚杯团体无人机章节](../cases/2021-meiya-drone-xd-wp-methods.md)：Q50—51、Q77—84 的文字选读，未逐图复核；手机 TXT 与 DAT、媒体和应用数据库互补。
+- [2026 FIC 初赛 Q20](../cases/2026-fic-drone-xd-wp-methods.md)：手机 DJI Fly FlightRecord、文件头摘要和地名反查；与 pydjirecord 作者说明核对后明确摘要不等于完整帧解密。
+- [无人机方法卡](drone-flight-log-forensics.md)：核对 DatCon/CsvView 4.3.0、dji-log-parser v0.5.7、pydjirecord 解析模式、ExifTool DJI 字段及 ArduPilot/PX4 工具分支。
+
+验证范围：文档核对和本机工具文件盘点，ExifTool、Java、ffprobe 版本命令实际成功；没有原始日志复验、没有证明弘连授权或具体新机型解析成功。工具缺口及私有安装路径留本地准备清单。两份 WP 为作者报告，非官方答案；2023 美亚杯原页正文失败与 mumuzi 只读目录不计入已学。公开稿不含凭据、设备编号、坐标或原始附件。
+
+本地只备份后新增方法索引项，沿用 digital-forensics 统一入口，未新增同类技能或更改启用配置。下一步拿到实际机型和格式再选择解析器，依题意检查有效帧、覆盖时段和跨检材关联。
