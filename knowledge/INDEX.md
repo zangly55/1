@@ -1,5 +1,10 @@
 # 数字取证知识库
 
+## 2026-11-21 数证准备
+
+[案件连接与题目导出准备](cases/20261121093215T-shuzheng-preparation.md)：案件 API 可达、检材数0；等待挂载信息。按美亚杯既有页面文字导出方式提供控制台脚本，目标站未完成端到端验证。
+
+
 ## 2026-11-21 每日学习：Windows PE
 
 新增 [PE 地址定位与构建时间戳边界](topics/pe-address-timestamp-boundaries.md)：依据两份 Microsoft 官方文档，区分 RVA/文件偏移、证书表例外及 REPRO 时间字段。仅文档核对，未运行样本或复验检材；见[学习目录](topics/competition-wp-learning.md)。
