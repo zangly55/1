@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-22 每日学习：邮件头信任边界
+
+新增 [Received 与 Authentication-Results](topics/email-header-trust-boundaries.md)，依据 RFC 5321 与 RFC 8601 的选读章节，区分头字段声明与可核查来源，避免把认证 pass 当作内容可信或操作者证明。仅文档核对，未连接邮箱或复验邮件；范围见[学习目录](topics/competition-wp-learning.md)。
+
 ## 2026-11-21 数证无人机案件
 
 [遥控器离线解析与十题复核](cases/20261121135627D-shuzheng-drone-preparation.md)。210 份飞行 TXT 中离线解出 143 个架次，另核对新版文件头、账号同步、弹窗告警、固件与授权配置。二审发现序列化授权中心与明文字段冲突，第 8 题按授权载荷修订并留存两种口径；第 9 题保留缓存候选，删除动作缺直接证据。完整答案与敏感标识存于本地。
