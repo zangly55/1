@@ -4,6 +4,10 @@
 
 [按题目查文件、表与字段](topics/forensic-artifact-quick-reference.md)。涵盖 iPhone、Android、Windows、Linux、网络与邮件、物联网、程序与内存及资金流水，附核验要点和原案例或专题链接。
 
+## 2026-11-23 取证 skill 自动分派与专家复核
+
+[自动分派与专项专家复核](topics/digital-forensics-agent-configuration.md#2026-11-23-自动分派与专项专家复核)：同一入口按检材委派，执行者按专项指南作业，独立复核者按来源核对步骤与结论。用合成服务器日志和笔录完成分工与冲突检查，未使用真实检材。原部署记录保留在同页。
+
 ## 2026-11-23 每日学习：物联网 MQTT
 
 新增 [MQTT 留存、重复消息与持久化边界](topics/iot-mqtt-retained-evidence-boundaries.md)：依据 MQTT 5.0 标准和 Mosquitto 官方手册，区分留存状态、重投报文、业务事件与盘上状态。仅文档核对，未设备/抓包复验。用户新增的物联网轮换范围及本轮进度见[学习目录](topics/competition-wp-learning.md)。
@@ -56,10 +60,6 @@
 ## 2026-11-16 取证知识每日学习
 
 [学习目录与方法索引](topics/competition-wp-learning.md)：已配置每日北京时间09:00检索取证知识点、实战经验、案例、官方文档和近期及往届WP，不限比赛材料。首批选读2026西电长安杯、2026平航杯和2025美亚杯个人赛，保存三份署名摘要与六条参考路径，另补[Volatility符号匹配](topics/volatility3-symbol-matching.md)官方文档知识，保持官方题解/原作者报告/争议状态。未取得原检材复验；2024美亚杯页面超时待重试。方法已接入本机 digital_forensics 的按需索引，配置与链接校验通过，不声称准确率已提升。
-
-## 2026-11-16 取证 skill 的 agent 配置与部署
-
-[digital-forensics 的 Codex agent 配置方案](topics/digital-forensics-agent-configuration.md)：区分直接对话的项目助手与可委派的自定义子代理，提供复用统一 skill 的脱敏配置示例与验收步骤。已部署 digital_forensics 自定义角色；本机配置校验、运行时角色发现和45处本地引用检查通过，保持原统一 skill 分类。未进行模型子代理实际执行或真实检材分析，不代表取证产品已连接。
 
 ## 2026-11-14 下午团体赛（赛后WP）
 
