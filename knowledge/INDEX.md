@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 取证知识点速查
+
+[按题目查文件、表与字段](topics/forensic-artifact-quick-reference.md)。涵盖 iPhone、Android、Windows、Linux、网络与邮件、物联网、程序与内存及资金流水，附核验要点和原案例或专题链接。
+
 ## 2026-11-23 每日学习：物联网 MQTT
 
 新增 [MQTT 留存、重复消息与持久化边界](topics/iot-mqtt-retained-evidence-boundaries.md)：依据 MQTT 5.0 标准和 Mosquitto 官方手册，区分留存状态、重投报文、业务事件与盘上状态。仅文档核对，未设备/抓包复验。用户新增的物联网轮换范围及本轮进度见[学习目录](topics/competition-wp-learning.md)。
