@@ -12,6 +12,8 @@
 
 - 04 号 E01 的原文截图已核对。第一张展示火眼 `Linux 基本信息 → 系统信息` 中的主机信息，第二张在火眼左侧解析树列出 `Redis解析` 和 `MySQL解析`，下级路径在图中截断。该截图支持镜像中有可被火眼识别的数据库数据；确认 04 本机实际安装或运行对应服务，还需核对已安装包、服务配置或运行日志。PV 的后端配置可辅助识别该机承担的存储角色。 [原文证据截图](https://forensics.xidian.edu.cn/assets/images/writeups/Shuzheng2025Preliminary/Pasted%20image%2020251104110015.png)
 
+- 原文仿真截图显示 VMware Workstation 将 `VMnet8`（NAT）设为 `192.168.50.0/24`，接入了宿主机虚拟适配器，并启用了 VMware DHCP。若重建虚拟机接入同一 VMnet 并保留原来可用的固定地址，节点间通信及对 NFS 等后端的原地址引用可继续使用，减少重新配置。DHCP 是否实际分配该地址须查看来宾配置或租约。NAT 提供出网能力，虚拟机在同一 VMnet 子网内互访通常直接进行。取证仿真应在授权的网络隔离范围内重建通信并记录改动。 [WP 服务器重建](https://forensics.xidian.edu.cn/writeups/Shuzheng2025Preliminary/#_6) · [VMware 网络模式](https://knowledge.broadcom.com/external/article?articleNumber=309842)
+
 ## VMware ESXi｜2025 第三届龙信杯
 
 服务器章节作者 NoahTie。原文展示用火眼解析 ESXi 检材的 VMFS，再导出两台虚拟机文件，将 VMDK 加作新检材后分析。 [XD Forensics Wiki 原文](https://forensics.xidian.edu.cn/writeups/Longxin2025/#vmware-esxi)
