@@ -10,6 +10,8 @@
 - Q07–Q10 涉及容器镜像、容器 ID、缓存服务和代码目录。重建段示范从 Pod 定位实际运行节点并查容器日志，也从 PV 的 NFS 配置定位后端目录，在单独的服务器镜像上继续查证。
 - 作者报告比赛时使用静态方法检查 Docker OverlayFS，赛后才以仿真补充。OverlayFS 路径及对象对应方式取决于本题使用的运行时、存储驱动和配置。PV 配置能定位声明的存储，判断目录是否存在或为何缺失仍需后端镜像或日志支持。
 
+- 04 号 E01 的原文截图已核对。第一张展示火眼 `Linux 基本信息 → 系统信息` 中的主机信息，第二张在火眼左侧解析树列出 `Redis解析` 和 `MySQL解析`，下级路径在图中截断。该截图支持镜像中有可被火眼识别的数据库数据；确认 04 本机实际安装或运行对应服务，还需核对已安装包、服务配置或运行日志。PV 的后端配置可辅助识别该机承担的存储角色。 [原文证据截图](https://forensics.xidian.edu.cn/assets/images/writeups/Shuzheng2025Preliminary/Pasted%20image%2020251104110015.png)
+
 ## VMware ESXi｜2025 第三届龙信杯
 
 服务器章节作者 NoahTie。原文展示用火眼解析 ESXi 检材的 VMFS，再导出两台虚拟机文件，将 VMDK 加作新检材后分析。 [XD Forensics Wiki 原文](https://forensics.xidian.edu.cn/writeups/Longxin2025/#vmware-esxi)
