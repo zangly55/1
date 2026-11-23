@@ -4,6 +4,10 @@
 
 [按题目查文件、表与字段](topics/forensic-artifact-quick-reference.md)。涵盖 iPhone、Android、Windows、Linux、网络与邮件、物联网、程序与内存及资金流水，附核验要点和原案例或专题链接。
 
+## 2026-11-23 Kubernetes 与 VMware ESXi 取证
+
+[证据位置与跨层时间线](topics/kubernetes-esxi-forensics.md)。涵盖 API 审计、容器与节点日志、ESXi 与 vCenter 日志、VMDK 快照链，以及 Pod 掉线的跨层归因。已核对官方文档，示例未用实物检材复验。
+
 ## 2026-11-23 取证 skill 自动分派与专家复核
 
 [自动分派与专项专家复核](topics/digital-forensics-agent-configuration.md#2026-11-23-自动分派与专项专家复核)：同一入口按检材委派，执行者按专项指南作业，独立复核者按来源核对步骤与结论。用合成服务器日志和笔录完成分工与冲突检查，未使用真实检材。原部署记录保留在同页。
