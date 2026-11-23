@@ -1,5 +1,9 @@
 # 数字取证知识库
 
+## 2026-11-23 每日学习：物联网 MQTT
+
+新增 [MQTT 留存、重复消息与持久化边界](topics/iot-mqtt-retained-evidence-boundaries.md)：依据 MQTT 5.0 标准和 Mosquitto 官方手册，区分留存状态、重投报文、业务事件与盘上状态。仅文档核对，未设备/抓包复验。用户新增的物联网轮换范围及本轮进度见[学习目录](topics/competition-wp-learning.md)。
+
 ## 2026-11-22 每日学习：邮件头信任边界
 
 新增 [Received 与 Authentication-Results](topics/email-header-trust-boundaries.md)，依据 RFC 5321 与 RFC 8601 的选读章节，区分头字段声明与可核查来源，避免把认证 pass 当作内容可信或操作者证明。仅文档核对，未连接邮箱或复验邮件；范围见[学习目录](topics/competition-wp-learning.md)。
