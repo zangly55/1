@@ -18,6 +18,12 @@ Kubernetes 管理 Pod 和容器的部署与调度。ESXi 在物理主机上运�
 
 Linux 节点通常从 `/var/log/pods` 查容器标准输出和错误输出，systemd 环境从 journal 查 kubelet 和运行时。`kubectl logs` 只提供相应实例最新的一份轮转日志。`--previous` 可读仍保留的上一次容器实例日志。`Events` 的保留有限，主要用于补充调度和状态变化。证据保全优先覆盖集中审计、节点与应用日志、轮转文件和事发时资源标识。参见 [日志架构](https://kubernetes.io/docs/concepts/cluster-administration/logging/)、[Events](https://kubernetes.io/docs/reference/kubernetes-api/events/) 和 [etcd 快照](https://kubernetes.io/docs/tasks/administer-cluster/configure-upgrade-etcd/#backing-up-an-etcd-cluster)。
 
+### kubectl 的安装与取证查询
+
+Windows 可用 `winget install -e --id Kubernetes.kubectl` 安装，或从官网按架构下载 `kubectl.exe`。将文件所在目录加入 `PATH`，或在该目录用 PowerShell 运行 `.\kubectl.exe version --client`。版本核对时，客户端与目标 API Server 应在一个 Kubernetes 次版本的差距内。参见 [Windows 安装](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/) 和 [版本兼容策略](https://kubernetes.io/releases/version-skew-policy/#kubectl)。
+
+`kubectl` 按 kubeconfig 选定的集群与身份向 Kubernetes API Server 发请求，查询取决于 API 可达性和权限。`kubectl get nodes` 查看节点清单，`kubectl get pods -A -o wide` 查看 Pod 与节点的对应，`kubectl get pv` 查看持久卷，`kubectl logs` 查看指定容器的可用日志。只有 E01 磁盘镜像时，从镜像副本检查配置、日志及运行时文件。若已授权重建，则在隔离的仿真环境中采集查询输出，并记录仿真状态和命令。参见 [kubectl 命令参考](https://kubernetes.io/docs/reference/kubectl/)。
+
 ## ESXi：主机、vCenter、虚拟机与来宾系统
 
 | 要回答的问题 | 首选证据 | 核对要点 |
